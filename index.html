@@ -1,21 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Repositorio de Trabajos</title>
+    <meta charset="UTF-8">
+    <title>Repositorio de Trabajos - Mis Chambas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .semana {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        embed, iframe {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-  <h1>📚 Mis Trabajos Semanales</h1>
-   <p>Hola GitHub Pages 🚀</p>
+    <h1>📚 Repositorio Semanal</h1>
 
-  <h2>Semana 1</h2>
-  <ul>
-    <li><a href="semana1/documento.pdf" target="_blank">Tarea 1 (PDF)</a></li>
-  </ul>
+    <!-- Semana 1 -->
+    <div class="semana">
+        <h2>Semana 1</h2>
+        <p>📄 Documento PDF:</p>
+        <embed src="semana1/Documento.pdf" type="application/pdf" width="100%" height="400px" />
 
-  <h2>Semana 2</h2>
-  <ul>
-    <li><a href="semana2/hola.docx" target="_blank">Informe (Word)</a></li>
-  </ul>
+        <p>🖼️ Imagen:</p>
+        <img src="semana1/imagen1.png" alt="Imagen semana 1">
+    </div>
+
+    <!-- Semana 2 -->
+    <div class="semana">
+        <h2>Semana 2</h2>
+        <p>📄 Documento Word:</p>
+        <a href="semana2/hola.docx" download>Descargar Word</a>
+
+        <p>🖼️ Imagen:</p>
+        <img src="semana2/esquema.jpg" alt="Imagen semana 2">
+    </div>
 </body>
 </html>
