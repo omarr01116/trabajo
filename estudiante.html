@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Estudiante</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h2>Panel del Estudiante</h2>
+    <button class="small" onclick="logout()">Cerrar sesión</button>
+  </header>
+
+  <main class="container">
+    <h3>Subir Trabajo</h3>
+    <form id="uploadForm">
+      <label for="semana">Seleccionar Semana:</label>
+      <select id="semana">
+        <option value="1">Semana 1</option>
+        <option value="2">Semana 2</option>
+        <option value="3">Semana 3</option>
+      </select>
+
+      <input type="file" id="archivo" accept=".pdf,.doc,.docx,image/*" required />
+      <button type="submit">Subir (simulado)</button>
+    </form>
+
+    <p><strong>Nota:</strong> Esta subida es **local** (solo para pruebas). Para que el archivo quede permanente en la web debes copiar el archivo en la carpeta `archivos/semanaX` del repo y actualizar `js/data.json` (pasos abajo).</p>
+
+    <h3>Archivos subidos (temporales)</h3>
+    <div id="localUploads">No hay subidas locales.</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
