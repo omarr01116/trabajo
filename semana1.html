@@ -30,7 +30,8 @@
           <td>Tarea 1</td>
           <td>PDF</td>
           <td>
-            <a href="archivos/semana1/tarea1.pdf" target="_blank" class="btn btn-sm btn-success">Ver</a>
+            <button class="btn btn-sm btn-success" 
+                    onclick="mostrarArchivo('archivos/semana1/tarea1.pdf','pdf')">Ver</button>
             <a href="archivos/semana1/tarea1.pdf" download class="btn btn-sm btn-secondary">Descargar</a>
           </td>
         </tr>
@@ -38,12 +39,55 @@
           <td>Informe 1</td>
           <td>Word</td>
           <td>
+            <button class="btn btn-sm btn-success" 
+                    onclick="mostrarArchivo('archivos/semana1/informe1.docx','word')">Ver</button>
             <a href="archivos/semana1/informe1.docx" download class="btn btn-sm btn-secondary">Descargar</a>
+          </td>
+        </tr>
+        <tr>
+          <td>Imagen Ejemplo</td>
+          <td>Imagen</td>
+          <td>
+            <button class="btn btn-sm btn-success" 
+                    onclick="mostrarArchivo('archivos/semana1/foto1.jpg','img')">Ver</button>
+            <a href="archivos/semana1/foto1.jpg" download class="btn btn-sm btn-secondary">Descargar</a>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <!-- Modal para ver archivos -->
+  <div class="modal fade" id="visorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Vista previa del archivo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center" id="visorContenido">
+          <!-- Aquí se cargará el archivo -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function mostrarArchivo(url, tipo) {
+      let contenido = "";
+      if (tipo === "pdf") {
+        contenido = `<embed src="${url}" type="application/pdf" width="100%" height="600px">`;
+      } else if (tipo === "img") {
+        contenido = `<img src="${url}" class="img-fluid rounded shadow">`;
+      } else if (tipo === "word") {
+        // Usa el visor online de Office
+        contenido = `<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${window.location.origin}/${url}" 
+                      width="100%" height="600px" frameborder="0"></iframe>`;
+      }
+      document.getElementById("visorContenido").innerHTML = contenido;
+      new bootstrap.Modal(document.getElementById("visorModal")).show();
+    }
+  </script>
 </body>
 </html>
