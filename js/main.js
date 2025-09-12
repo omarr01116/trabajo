@@ -130,8 +130,8 @@ async function loginApi(usuario, password) {
   try {
     const res = await fetch("https://r01116domar.xo.je/api/login.php", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ usuario, password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario, password })
     });
     return await res.json();
   } catch (err) {
@@ -140,31 +140,6 @@ async function loginApi(usuario, password) {
   }
 }
 
-function setupLogin() {
-  const loginForm = document.getElementById("loginForm");
-  if (!loginForm) return;
-
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const usuario = document.getElementById("usuario").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const msg = document.getElementById("mensaje");
-
-    const data = await loginApi(usuario, password);
-
-    if (data.success) {
-      localStorage.setItem("isLogged", "true");
-      window.location.href = "estudiante.html";
-    } else {
-      msg.textContent = "❌ " + data.message;
-    }
-  });
-}
-
-function logout() {
-  localStorage.removeItem("isLogged");
-  window.location.href = "index.html";
-}
 
 // -------------------------------
 // Panel estudiante: subir archivo
