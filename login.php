@@ -2,10 +2,10 @@
 session_start();
 
 // Configuración de la base de datos
-$host = "localhost";
-$db = "mis_trabajos";
-$user = "root";   // Cambia si tu usuario es otro
-$pass = "";       // Cambia si tu contraseña de MySQL tiene valor
+$host = "sql202.infinityfree.com";
+$db = "if0_39921547_mi_bd";
+$user = "if0_39921547";   // Cambia si tu usuario es otro
+$pass = "OxvjSj9Pcb";       // Cambia si tu contraseña de MySQL tiene valor
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {

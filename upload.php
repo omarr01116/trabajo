@@ -2,10 +2,10 @@
 header("Content-Type: application/json");
 
 // Configuración de la base de datos
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "mis_trabajos";  // aquí usas tu base real
+$host = "sql202.infinityfree.com";
+$user = "if0_39921547";
+$pass = "OxvjSj9Pcb";
+$db   = "if0_39921547_mi_bd";  // aquí usas tu base real
 
 $conn = new mysqli($host, $user, $pass, $db);
 

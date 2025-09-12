@@ -4,10 +4,10 @@
 // ===============================
 // Configuración de la BD
 // ===============================
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$database   = "mis_trabajos";
+$servername = "sql202.infinityfree.com";
+$username   = "if0_39921547_mi_bd";
+$password   = "OxvjSj9Pcb";
+$database   = "if0_39921547_mi_bd";
 
 $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
