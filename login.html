@@ -11,110 +11,58 @@
       color: white;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     .card {
       background-color: #1f1f1f;
       border: 2px solid cyan;
       border-radius: 15px;
       box-shadow: 0 0 15px cyan, 0 0 30px rgba(0,255,255,0.5);
     }
-
-    h3 {
-      color: cyan;
-      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
-    }
-
-    label {
-      color: #bbb;
-    }
-
+    h3 { color: cyan; text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
+    label { color: #bbb; }
     .form-control {
       background-color: #121212;
       border: 1px solid #333;
       color: #fff;
     }
-
     .form-control:focus {
       border-color: cyan;
       box-shadow: 0 0 10px cyan;
       background-color: #121212;
       color: #fff;
     }
-
     .btn-primary {
-      background: cyan;
-      border: none;
-      font-weight: bold;
-      color: #000;
-      box-shadow: 0 0 15px cyan;
-      transition: all 0.3s ease;
+      background: cyan; border: none; font-weight: bold; color: #000;
+      box-shadow: 0 0 15px cyan; transition: all 0.3s ease;
     }
-
     .btn-primary:hover {
-      background: magenta;
-      box-shadow: 0 0 20px magenta;
-      color: #fff;
+      background: magenta; box-shadow: 0 0 20px magenta; color: #fff;
     }
-
-    a {
-      color: magenta;
-      text-shadow: 0 0 8px magenta;
-      transition: 0.3s;
-    }
-
-    a:hover {
-      color: cyan;
-      text-shadow: 0 0 12px cyan;
-    }
+    a { color: magenta; text-shadow: 0 0 8px magenta; transition: 0.3s; }
+    a:hover { color: cyan; text-shadow: 0 0 12px cyan; }
   </style>
 </head>
 <body class="d-flex align-items-center justify-content-center vh-100">
 
-  <div class="card shadow-lg p-4" style="width: 350px;">
-    <h3 class="text-center mb-4">Iniciar Sesión</h3>
-    <form id="loginForm">
-      <div class="mb-3">
-        <label for="usuario" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="usuario" placeholder="Ingresa tu usuario" required>
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña" required>
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Entrar</button>
-    </form>
-    <div id="mensaje" class="text-center mt-3 text-danger"></div>
-    <div class="text-center mt-3">
-      <a href="index.html">⬅️ Volver</a>
+<div class="card shadow-lg p-4" style="width: 350px;">
+  <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+  <!-- Formulario usando POST normal -->
+  <form method="POST" action="login.php">
+    <div class="mb-3">
+      <label for="usuario" class="form-label">Usuario</label>
+      <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingresa tu usuario" required>
     </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="index.html">⬅️ Volver</a>
   </div>
+</div>
 
-  <!-- Axios para llamadas HTTP -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const usuario = document.getElementById("usuario").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const mensaje = document.getElementById("mensaje");
-
-      try {
-        const res = await axios.post("https://r01116domar.xo.je/api/login.php", {
-          usuario,
-          password
-        });
-
-        if (res.data.success) {
-          localStorage.setItem("isLogged", "true");
-          window.location.href = "estudiante.html";
-        } else {
-          mensaje.textContent = "❌ Usuario o contraseña incorrectos";
-        }
-      } catch (err) {
-        mensaje.textContent = "⚠️ Error al conectar con el servidor";
-        console.error(err);
-      }
-    });
-  </script>
 </body>
 </html>

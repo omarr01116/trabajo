@@ -3,193 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Trabajos</title>
+  <title>Semana 1 - Repositorio Académico</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
-      background-color: #121212;
-      color: #fff;
+      background-color: #0d0d0d;
+      color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Línea superior minimalista */
-    .top-line {
-      height: 3px;
-      background: linear-gradient(90deg, cyan, magenta, blue);
-      box-shadow: 0 0 10px cyan, 0 0 20px magenta;
+    /* Navbar neon */
+    .navbar {
+      background: #0d0d0d;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.4);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
     }
 
-    h2 {
-      text-align: center;
-      margin: 30px 0;
-      font-size: 2rem;
-      color: cyan;
-      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
-    }
-
-    .card {
-      background-color: #1f1f1f;
-      border: none;
-      border-radius: 12px;
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
-    }
-
-    .card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px cyan, 0 0 30px magenta;
-    }
-
-    .card img {
-      border-radius: 10px;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      margin-top: 10px;
-      color: #fff;
-      text-shadow: 0 0 8px magenta;
-    }
-
-    .categoria {
-      font-size: 0.85rem;
-      color: #aaa;
-    }
-
-    /* Botones en modal */
-    .modal-content {
-      border-radius: 12px;
-      border: 2px solid cyan;
-      box-shadow: 0 0 20px cyan;
-    }
-
-    .btn-success {
-      background-color: cyan;
-      border: none;
-      color: #000;
+    .navbar-brand {
       font-weight: bold;
-      box-shadow: 0 0 10px cyan;
+      color: #0ff !important;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      transition: transform 0.3s ease;
     }
 
-    .btn-success:hover {
-      background-color: magenta;
-      box-shadow: 0 0 20px magenta;
+    .navbar-brand:hover {
+      transform: scale(1.1);
     }
 
-    .btn-secondary {
-      background-color: #333;
-      border: none;
-      color: #fff;
-    }
-
-    .btn-secondary:hover {
-      background-color: #444;
-    }
-
-    /* Botón volver */
     .btn-outline-light {
-      border: 1px solid cyan;
-      color: cyan;
-      font-weight: bold;
-      text-shadow: 0 0 8px cyan;
+      border: 1px solid #0ff;
+      color: #0ff;
+      transition: all 0.3s;
     }
 
     .btn-outline-light:hover {
-      background-color: cyan;
+      background: #0ff;
       color: #000;
-      box-shadow: 0 0 15px cyan;
+      box-shadow: 0 0 10px #0ff;
+    }
+
+    /* Título principal */
+    h2 {
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* Tabla neon */
+    .table {
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+    }
+
+    .table th {
+      background: #0ff;
+      color: #000;
+      text-align: center;
+    }
+
+    .table td {
+      vertical-align: middle;
+      color: #e0e0e0;
+    }
+
+    .btn-sm {
+      font-size: 0.85rem;
+      padding: 5px 10px;
+    }
+
+    /* Footer */
+    footer {
+      background: #111;
+      color: #777;
+      border-top: 1px solid #333;
+      margin-top: 50px;
+      padding: 15px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Línea superior -->
-  <div class="top-line"></div>
-
-  <!-- Navbar minimal -->
-  <nav class="d-flex justify-content-between align-items-center px-3 py-2">
-    <a href="index.html" class="btn btn-outline-light">⬅️ Volver</a>
-    <span class="fw-bold" style="color: magenta; text-shadow: 0 0 8px magenta;">Mis Trabajos</span>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg px-3">
+    <a class="navbar-brand" href="index.html">
+      <i class="bi bi-lightning-charge-fill"></i> Omar
+    </a>
+    <div class="ms-auto">
+      <a href="login.html" class="btn btn-outline-light">
+        <i class="bi bi-box-arrow-in-right"></i> Login
+      </a>
+    </div>
   </nav>
 
-  <div class="container py-4">
-    <h2>Semana 1</h2>
+  <!-- Contenido -->
+  <div class="container py-5">
+    <h2>Semana 1 - Archivos Subidos</h2>
 
-    <div class="row g-4">
-      <!-- Tarjeta 1 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="card p-2" onclick="mostrarArchivo('archivos/semana1/tarea1.pdf','Tarea 1','pdf')">
-          <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="img-fluid" alt="Tarea 1">
-          <div class="card-body p-1 text-center">
-            <h6 class="card-title">Tarea 1</h6>
-            <p class="categoria">PDF</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tarjeta 2 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="card p-2" onclick="mostrarArchivo('archivos/semana1/informe1.docx','Informe 1','word')">
-          <img src="https://cdn-icons-png.flaticon.com/512/281/281760.png" class="img-fluid" alt="Informe 1">
-          <div class="card-body p-1 text-center">
-            <h6 class="card-title">Informe 1</h6>
-            <p class="categoria">Word</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tarjeta 3 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="card p-2" onclick="mostrarArchivo('archivos/semana1/foto1.jpg','Foto Ejemplo','img')">
-          <img src="archivos/semana1/foto1.jpg" class="img-fluid" alt="Foto">
-          <div class="card-body p-1 text-center">
-            <h6 class="card-title">Foto Ejemplo</h6>
-            <p class="categoria">Imagen</p>
-          </div>
-        </div>
-      </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre del archivo</th>
+            <th>Fecha de subida</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se generan dinámicamente los archivos -->
+          <tr>
+            <td>1</td>
+            <td>informe1.pdf</td>
+            <td>12/09/2025</td>
+            <td class="text-center">
+              <a href="uploads/informe1.pdf" target="_blank" class="btn btn-sm btn-primary">
+                <i class="bi bi-eye"></i> Ver
+              </a>
+              <a href="uploads/informe1.pdf" download class="btn btn-sm btn-outline-light">
+                <i class="bi bi-download"></i> Descargar
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>tarea.docx</td>
+            <td>12/09/2025</td>
+            <td class="text-center">
+              <a href="uploads/tarea.docx" target="_blank" class="btn btn-sm btn-primary">
+                <i class="bi bi-eye"></i> Ver
+              </a>
+              <a href="uploads/tarea.docx" download class="btn btn-sm btn-outline-light">
+                <i class="bi bi-download"></i> Descargar
+              </a>
+            </td>
+          </tr>
+          <!-- Más archivos se agregan aquí -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="visorModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header border-bottom border-secondary">
-          <h5 class="modal-title" id="modalTitulo">Vista previa</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body text-center" id="visorContenido">
-          <!-- Aquí se carga el contenido -->
-        </div>
-        <div class="modal-footer border-top border-secondary">
-          <a id="btnVer" target="_blank" class="btn btn-success">Ver</a>
-          <a id="btnDescargar" download class="btn btn-secondary">Descargar</a>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Footer -->
+  <footer class="text-center">
+    © 2025 Omar - Repositorio académico
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function mostrarArchivo(url, nombre, tipo) {
-      document.getElementById("modalTitulo").innerText = nombre;
-      document.getElementById("btnVer").href = url;
-      document.getElementById("btnDescargar").href = url;
-
-      let contenido = "";
-      if (tipo === "pdf") {
-        contenido = `<embed src="${url}" type="application/pdf" width="100%" height="500px">`;
-      } else if (tipo === "img") {
-        contenido = `<img src="${url}" class="img-fluid rounded shadow">`;
-      } else if (tipo === "word") {
-        contenido = `<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${window.location.origin}/${url}" width="100%" height="500px"></iframe>`;
-      }
-
-      document.getElementById("visorContenido").innerHTML = contenido;
-      new bootstrap.Modal(document.getElementById("visorModal")).show();
-    }
-  </script>
 </body>
 </html>

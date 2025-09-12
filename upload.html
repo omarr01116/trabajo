@@ -11,33 +11,26 @@
       color: white;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    /* Navbar minimalista */
     .navbar {
       background-color: #111 !important;
       border-bottom: 2px solid cyan;
       box-shadow: 0 0 10px cyan;
     }
-
     .navbar-brand {
       font-weight: bold;
       color: cyan !important;
       text-shadow: 0 0 10px cyan, 0 0 20px cyan;
     }
-
     .btn-outline-light {
       border: 1px solid cyan;
       color: cyan;
       transition: all 0.3s;
     }
-
     .btn-outline-light:hover {
       background: cyan;
       color: #000;
       box-shadow: 0 0 10px cyan;
     }
-
-    /* Tarjeta del formulario */
     .form-card {
       background: #1f1f1f;
       border: 2px solid cyan;
@@ -45,74 +38,95 @@
       padding: 30px;
       box-shadow: 0 0 20px rgba(0,255,255,0.5);
     }
-
-    h2 {
-      color: cyan;
-      text-shadow: 0 0 12px cyan;
-    }
-
-    label {
-      color: #ccc;
-    }
-
+    h2 { color: cyan; text-shadow: 0 0 12px cyan; }
+    label { color: #ccc; }
     .form-select, .form-control {
       background-color: #121212;
       border: 1px solid #333;
       color: #fff;
     }
-
     .form-select:focus, .form-control:focus {
       border-color: cyan;
       box-shadow: 0 0 10px cyan;
       background-color: #121212;
       color: #fff;
     }
-
     .btn-primary {
-      background: cyan;
-      border: none;
-      font-weight: bold;
-      color: #000;
-      box-shadow: 0 0 15px cyan;
-      transition: all 0.3s ease;
+      background: cyan; border: none; font-weight: bold; color: #000;
+      box-shadow: 0 0 15px cyan; transition: all 0.3s ease;
     }
-
     .btn-primary:hover {
-      background: magenta;
-      box-shadow: 0 0 20px magenta;
-      color: #fff;
+      background: magenta; box-shadow: 0 0 20px magenta; color: #fff;
+    }
+    #mensaje {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar px-3">
-    <a href="index.html" class="btn btn-outline-light">⬅️ Volver</a>
-    <span class="navbar-brand ms-3">📂 Subida de Trabajos</span>
-  </nav>
+<nav class="navbar px-3">
+  <a href="index.html" class="btn btn-outline-light">⬅️ Volver</a>
+  <span class="navbar-brand ms-3">📂 Subida de Trabajos</span>
+</nav>
 
-  <!-- Contenido -->
-  <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="form-card w-100" style="max-width: 500px;">
-      <h2 class="text-center mb-4">Subir Trabajo</h2>
-      <form>
-        <div class="mb-3">
-          <label class="form-label">Seleccionar semana</label>
-          <select class="form-select">
-            <option>Semana 1</option>
-            <option>Semana 2</option>
-            <option>Semana 3</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Subir archivo</label>
-          <input type="file" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png">
-        </div>
-        <button type="submit" class="btn btn-primary w-100">🚀 Subir</button>
-      </form>
-    </div>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="form-card w-100" style="max-width: 500px;">
+    <h2 class="text-center mb-4">Subir Trabajo</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="semana" class="form-label">Seleccionar semana</label>
+        <select id="semana" name="semana" class="form-select" required>
+          <option value="">-- Seleccionar --</option>
+          <option value="semana1">Semana 1</option>
+          <option value="semana2">Semana 2</option>
+          <option value="semana3">Semana 3</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="archivo" class="form-label">Subir archivo</label>
+        <input id="archivo" type="file" name="archivo" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">🚀 Subir</button>
+    </form>
+    <div id="mensaje"></div>
   </div>
+</div>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const mensaje = document.getElementById("mensaje");
+  mensaje.textContent = "⏳ Subiendo...";
+  mensaje.style.color = "yellow";
+
+  const formData = new FormData(this);
+
+  try {
+    const res = await fetch("upload.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      mensaje.style.color = "lime";
+      mensaje.textContent = data.message || "✅ Archivo subido correctamente";
+      this.reset();
+    } else {
+      mensaje.style.color = "red";
+      mensaje.textContent = "❌ " + (data.message || "Error al registrar archivo");
+    }
+  } catch (err) {
+    mensaje.style.color = "red";
+    mensaje.textContent = "⚠️ Error al conectar con el servidor";
+    console.error("Error:", err);
+  }
+});
+</script>
 
 </body>
 </html>

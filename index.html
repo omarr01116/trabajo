@@ -13,9 +13,8 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Navbar minimalista con línea neon */
     .navbar {
-      background: #0d0d0d; /* mismo fondo que el body */
+      background: #0d0d0d;
       border-bottom: 1px solid rgba(0, 255, 255, 0.4);
       box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
     }
@@ -43,7 +42,6 @@
       box-shadow: 0 0 10px #0ff;
     }
 
-    /* Título principal animado */
     h1 {
       color: #0ff;
       text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
@@ -55,7 +53,6 @@
       to { text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; }
     }
 
-    /* Cards estilo neon */
     .card {
       background: #1a1a1a;
       border: none;
@@ -94,7 +91,6 @@
       box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
     }
 
-    /* Footer */
     footer {
       background: #111;
       color: #777;
@@ -129,7 +125,7 @@
           <div class="card-body">
             <h5 class="card-title">Semana 1</h5>
             <p class="card-text">Trabajos y actividades iniciales.</p>
-            <a href="semana1.html" class="btn btn-primary mt-2">
+            <a href="semana.php?semana=1" class="btn btn-primary mt-2">
               <i class="bi bi-folder2-open"></i> Ver trabajos
             </a>
           </div>
@@ -142,7 +138,7 @@
           <div class="card-body">
             <h5 class="card-title">Semana 2</h5>
             <p class="card-text">Actividades y entregas.</p>
-            <a href="semana2.html" class="btn btn-primary mt-2">
+            <a href="semana.php?semana=2" class="btn btn-primary mt-2">
               <i class="bi bi-folder2-open"></i> Ver trabajos
             </a>
           </div>
@@ -155,7 +151,20 @@
           <div class="card-body">
             <h5 class="card-title">Semana 3</h5>
             <p class="card-text">Prácticas y documentos.</p>
-            <a href="semana3.html" class="btn btn-primary mt-2">
+            <a href="semana.php?semana=3" class="btn btn-primary mt-2">
+              <i class="bi bi-folder2-open"></i> Ver trabajos
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Puedes añadir más semanas -->
+      <div class="col-md-4">
+        <div class="card text-center p-3">
+          <div class="card-body">
+            <h5 class="card-title">Semana 4</h5>
+            <p class="card-text">Contenidos adicionales.</p>
+            <a href="semana.php?semana=4" class="btn btn-primary mt-2">
               <i class="bi bi-folder2-open"></i> Ver trabajos
             </a>
           </div>
