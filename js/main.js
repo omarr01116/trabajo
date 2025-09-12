@@ -20,35 +20,44 @@ function saveLocalUploads(obj) {
   localStorage.setItem("uploadedFiles", JSON.stringify(obj));
 }
 
-// Index: listar semanas
+// Index: listar semanas en estilo card
 async function renderIndex() {
   const el = document.getElementById("weeksList");
   if (!el) return;
   const server = await loadServerData();
   const local = getLocalUploads();
 
-  // union de keys
   const weeks = new Set([...Object.keys(server), ...Object.keys(local)]);
   if (weeks.size === 0) {
-    el.innerHTML = "<p>No hay semanas definidas.</p>";
+    el.innerHTML = "<p class='text-center text-muted'>No hay semanas definidas.</p>";
     return;
   }
 
-  let html = "<ul>";
+  let html = `<div class="row g-4 justify-content-center">`;
   Array.from(weeks).sort((a,b) => a-b).forEach(w => {
     const countServer = (server[w]||[]).length;
     const countLocal = (local[w]||[]).length;
     const total = countServer + countLocal;
-    html += `<li>
-      <a href="semana.html?semana=${w}">Semana ${w}</a>
-      <span>${total} archivo(s)</span>
-    </li>`;
+
+    html += `
+      <div class="col-md-4">
+        <div class="card bg-dark text-light border-neon shadow-lg h-100">
+          <div class="card-body text-center">
+            <h4 class="card-title text-neon">Semana ${w}</h4>
+            <p class="card-text text-muted">${total} archivo(s) disponible(s)</p>
+            <a href="semana.html?semana=${w}" class="btn btn-neon w-100">
+              Ver trabajos
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
   });
-  html += "</ul>";
+  html += "</div>";
   el.innerHTML = html;
 }
 
-// Semana: mostrar archivos de esa semana
+// Semana: mostrar archivos de esa semana en cards
 async function renderSemana() {
   const el = document.getElementById("listaTrabajos");
   const title = document.getElementById("tituloSemana");
@@ -60,43 +69,45 @@ async function renderSemana() {
 
   const server = await loadServerData();
   const local = getLocalUploads();
-
   const items = [...(server[semana]||[]), ...(local[semana]||[])];
 
   if (items.length === 0) {
-    el.innerHTML = "<p>No hay trabajos para esta semana.</p>";
+    el.innerHTML = `<div class="alert alert-dark text-center border-neon">
+      🚫 No hay trabajos para esta semana.
+    </div>`;
     return;
   }
 
-  let html = "<ul>";
-  items.forEach((t, idx) => {
-    // if file is local (dataURL) we can't use download attr for docx reliably; still provide link
-    if (t.tipo === "pdf") {
-      html += `<li>
-        <div>
-          <strong>📄 ${t.nombre}</strong>
+  let html = `<div class="row g-4">`;
+  items.forEach((t) => {
+    let icon = "📎";
+    if (t.tipo === "pdf") icon = "📄";
+    else if (t.tipo === "word") icon = "📝";
+    else if (t.tipo === "image") icon = "🖼";
+
+    html += `
+      <div class="col-md-4">
+        <div class="card bg-dark text-light border-neon shadow-lg h-100">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <h5 class="card-title text-neon">${icon} ${t.nombre}</h5>
+            <div class="mt-3">
+              ${
+                t.tipo === "pdf"
+                  ? `<a href="${t.archivo}" target="_blank" class="btn btn-neon w-100 mb-2">Ver PDF</a>
+                     <a href="${t.archivo}" download class="btn btn-outline-neon w-100">Descargar</a>`
+                  : t.tipo === "word"
+                  ? `<a href="${t.archivo}" download class="btn btn-neon w-100">Descargar Word</a>`
+                  : t.tipo === "image"
+                  ? `<a href="${t.archivo}" target="_blank" class="btn btn-neon w-100">Abrir Imagen</a>`
+                  : `<a href="${t.archivo}" target="_blank" class="btn btn-neon w-100">Abrir</a>`
+              }
+            </div>
+          </div>
         </div>
-        <div>
-          <a href="${t.archivo}" target="_blank">Ver</a>
-          &nbsp;|&nbsp;
-          <a href="${t.archivo}" download>Descargar</a>
-        </div>
-      </li>`;
-    } else if (t.tipo === "word") {
-      html += `<li>
-        <div><strong>📝 ${t.nombre}</strong></div>
-        <div><a href="${t.archivo}" download>Descargar (Word)</a></div>
-      </li>`;
-    } else if (t.tipo === "image") {
-      html += `<li>
-        <div><strong>🖼 ${t.nombre}</strong></div>
-        <div><a href="${t.archivo}" target="_blank">Abrir imagen</a></div>
-      </li>`;
-    } else {
-      html += `<li><div><strong>${t.nombre}</strong></div><div><a href="${t.archivo}" target="_blank">Abrir</a></div></li>`;
-    }
+      </div>
+    `;
   });
-  html += "</ul>";
+  html += "</div>";
   el.innerHTML = html;
 }
 
@@ -111,15 +122,17 @@ function setupLogin() {
     const msg = document.getElementById("mensaje");
 
     if (usuario === "estudiante" && password === "123") {
+      localStorage.setItem("isLogged", "true");
       window.location.href = "estudiante.html";
     } else {
-      msg.textContent = "Credenciales incorrectas. Usa estudiante / 123";
+      msg.textContent = "❌ Credenciales incorrectas. Usa estudiante / 123";
     }
   });
 }
 
 // Logout
 function logout() {
+  localStorage.removeItem("isLogged");
   window.location.href = "index.html";
 }
 
@@ -132,9 +145,10 @@ function setupStudentUpload() {
     const local = getLocalUploads();
     const html = Object.keys(local).sort((a,b)=>a-b).map( s => {
       const items = local[s];
-      return `<h4>Semana ${s} (${items.length})</h4>` + items.map(i=>`<div>• ${i.nombre}</div>`).join("");
+      return `<h4 class="text-neon">Semana ${s} (${items.length})</h4>` + 
+             items.map(i=>`<div class="text-light">• ${i.nombre}</div>`).join("");
     }).join("");
-    status.innerHTML = html || "No hay subidas locales.";
+    status.innerHTML = html || "<p class='text-muted'>No hay subidas locales.</p>";
   };
   refreshLocalList();
 
@@ -160,7 +174,7 @@ function setupStudentUpload() {
         tipo
       });
       saveLocalUploads(local);
-      alert("Archivo guardado localmente (prueba). Para hacerlo permanente, copie el archivo en 'archivos/semanaX' y actualice js/data.json en el repo.");
+      alert("✅ Archivo guardado localmente (prueba). Para hacerlo permanente, cópialo en 'archivos/semanaX' y actualiza js/data.json en el repo.");
       refreshLocalList();
       form.reset();
     };
@@ -179,6 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSemana();
   }
   if (path.endsWith("estudiante.html")) {
-    setupStudentUpload();
+    // proteccion de login
+    if (!localStorage.getItem("isLogged")) {
+      alert("Debes iniciar sesión primero.");
+      window.location.href = "login.html";
+    } else {
+      setupStudentUpload();
+    }
   }
 });
