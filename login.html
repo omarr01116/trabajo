@@ -89,7 +89,32 @@
     </div>
   </div>
 
-  <!-- Script que maneja login -->
-  <script src="main.js"></script>
+  <!-- Axios para llamadas HTTP -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const usuario = document.getElementById("usuario").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const mensaje = document.getElementById("mensaje");
+
+      try {
+        const res = await axios.post("https://r01116domar.xo.je/api/login.php", {
+          usuario,
+          password
+        });
+
+        if (res.data.success) {
+          localStorage.setItem("isLogged", "true");
+          window.location.href = "estudiante.html";
+        } else {
+          mensaje.textContent = "❌ Usuario o contraseña incorrectos";
+        }
+      } catch (err) {
+        mensaje.textContent = "⚠️ Error al conectar con el servidor";
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
