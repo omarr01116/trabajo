@@ -11,7 +11,9 @@
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <a class="navbar-brand" href="#">📚 Mis Chambas</a>
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-journal-bookmark"></i> Mis Chambas
+    </a>
     <div class="ms-auto">
       <a href="login.html" class="btn btn-outline-light">
         <i class="bi bi-box-arrow-in-right"></i> Login
@@ -19,45 +21,72 @@
     </div>
   </nav>
 
-  <!-- Contenedor -->
+  <!-- Contenedor principal -->
   <div class="container py-5">
-    <h1 class="text-center mb-4">Repositorio de Trabajos</h1>
-    <p class="text-center text-muted mb-5">Selecciona una semana para ver los trabajos disponibles.</p>
+    <h1 class="text-center mb-4">Repositorio Académico</h1>
+    <p class="text-center text-muted mb-5">Selecciona la semana que deseas consultar para ver los trabajos disponibles.</p>
 
     <div class="row justify-content-center g-4">
+
       <!-- Semana 1 -->
       <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body text-center">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body text-center d-flex flex-column">
             <h5 class="card-title">Semana 1</h5>
-            <p class="card-text text-muted">Trabajos y actividades.</p>
-            <a href="semana1.html" class="btn btn-primary">Ver trabajos</a>
+            <p class="card-text text-muted flex-grow-1">Trabajos y actividades iniciales.</p>
+            <a href="semana1.html" class="btn btn-primary mt-auto">
+              <i class="bi bi-folder2-open"></i> Ver trabajos
+            </a>
           </div>
         </div>
       </div>
+
       <!-- Semana 2 -->
       <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body text-center">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body text-center d-flex flex-column">
             <h5 class="card-title">Semana 2</h5>
-            <p class="card-text text-muted">Trabajos y actividades.</p>
-            <a href="semana2.html" class="btn btn-primary">Ver trabajos</a>
+            <p class="card-text text-muted flex-grow-1">Actividades y entregas.</p>
+            <a href="semana2.html" class="btn btn-primary mt-auto">
+              <i class="bi bi-folder2-open"></i> Ver trabajos
+            </a>
           </div>
         </div>
       </div>
+
       <!-- Semana 3 -->
       <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body text-center">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body text-center d-flex flex-column">
             <h5 class="card-title">Semana 3</h5>
-            <p class="card-text text-muted">Trabajos y actividades.</p>
-            <a href="semana3.html" class="btn btn-primary">Ver trabajos</a>
+            <p class="card-text text-muted flex-grow-1">Prácticas y documentos.</p>
+            <a href="semana3.html" class="btn btn-primary mt-auto">
+              <i class="bi bi-folder2-open"></i> Ver trabajos
+            </a>
           </div>
         </div>
       </div>
+
+      <!-- Agregar más semanas fácilmente -->
+      <!-- Copia y pega este bloque cambiando número de semana y link -->
+      <!--
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body text-center d-flex flex-column">
+            <h5 class="card-title">Semana X</h5>
+            <p class="card-text text-muted flex-grow-1">Descripción.</p>
+            <a href="semanaX.html" class="btn btn-primary mt-auto">
+              <i class="bi bi-folder2-open"></i> Ver trabajos
+            </a>
+          </div>
+        </div>
+      </div>
+      -->
+
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="bg-dark text-light text-center py-3 mt-5">
     © 2025 Mis Chambas - Repositorio académico
   </footer>
