@@ -43,7 +43,7 @@
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         alert("Login exitoso, bienvenido " + userCredential.user.email);
-        window.location.href = "semana1.html"; // Redirigir si todo ok
+        window.location.href = "upload.html"; // Redirigir si todo ok
       } catch (error) {
         alert("Error: " + error.message);
       }
