@@ -10,7 +10,7 @@
 </head>
 <body>
   <h2>📂 Archivos de <span id="titulo-semana"></span></h2>
-  <button onclick="window.location.href='upload.html'">⬅ Volver al Inicio</button>
+  <button onclick="window.location.href='index.html'">⬅ Volver al Inicio</button>
 
   <table border="1" style="margin-top:20px; width:80%; text-align:center;">
     <thead>
@@ -41,8 +41,10 @@
 
     // 🔹 Leer parámetros de la URL
     const params = new URLSearchParams(window.location.search);
-    const semanaSeleccionada = params.get("semana");
-    document.getElementById("titulo-semana").innerText = semanaSeleccionada;
+    const semanaSeleccionada = params.get("semana"); // ej: "2"
+    const semanaTexto = "Semana " + semanaSeleccionada; // ej: "Semana 2"
+
+    document.getElementById("titulo-semana").innerText = semanaTexto;
 
     const listaArchivos = document.getElementById("lista-archivos");
 
@@ -51,14 +53,14 @@
 
       const q = query(
         collection(db, "archivos"),
-        where("semana", "==", semanaSeleccionada)
+        where("semana", "==", semanaTexto) // ✅ aquí usamos "Semana X"
       );
 
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
         listaArchivos.innerHTML = `
-          <tr><td colspan="3">⚠ No hay archivos en ${semanaSeleccionada}.</td></tr>`;
+          <tr><td colspan="3">⚠ No hay archivos en ${semanaTexto}.</td></tr>`;
         return;
       }
 
