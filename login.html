@@ -3,103 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Omar</title>
+  <title>Login - Repositorio Académico</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
-      background: radial-gradient(circle at top, #1a1a1a, #000);
-      color: white;
+      background-color: #0d0d0d;
+      color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .card {
-      background-color: #1f1f1f;
-      border: 2px solid cyan;
-      border-radius: 15px;
-      box-shadow: 0 0 15px cyan, 0 0 30px rgba(0,255,255,0.5);
+
+    .login-container {
+      max-width: 400px;
+      margin: 80px auto;
+      padding: 30px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.3);
     }
-    h3 { color: cyan; text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
-    label { color: #bbb; }
+
+    h2 {
+      text-align: center;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      margin-bottom: 20px;
+    }
+
     .form-control {
-      background-color: #121212;
-      border: 1px solid #333;
-      color: #fff;
+      background: #111;
+      border: 1px solid #0ff;
+      color: #e0e0e0;
     }
+
     .form-control:focus {
-      border-color: cyan;
-      box-shadow: 0 0 10px cyan;
-      background-color: #121212;
-      color: #fff;
+      box-shadow: 0 0 10px #0ff;
+      border-color: #0ff;
     }
-    .btn-primary {
-      background: cyan; border: none; font-weight: bold; color: #000;
-      box-shadow: 0 0 15px cyan; transition: all 0.3s ease;
+
+    .btn-neon {
+      background: transparent;
+      border: 1px solid #0ff;
+      color: #0ff;
+      transition: all 0.3s;
+      width: 100%;
     }
-    .btn-primary:hover {
-      background: magenta; box-shadow: 0 0 20px magenta; color: #fff;
+
+    .btn-neon:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 15px #0ff;
     }
-    a { color: magenta; text-shadow: 0 0 8px magenta; transition: 0.3s; }
-    a:hover { color: cyan; text-shadow: 0 0 12px cyan; }
+
+    .text-center a {
+      color: #0ff;
+      text-decoration: none;
+    }
+
+    .text-center a:hover {
+      text-shadow: 0 0 5px #0ff;
+    }
   </style>
 </head>
-<body class="d-flex align-items-center justify-content-center vh-100">
+<body>
 
-<div class="card shadow-lg p-4" style="width: 350px;">
-  <h3 class="text-center mb-4">Iniciar Sesión</h3>
-
-  <!-- Formulario -->
-  <form id="loginForm">
-    <div class="mb-3">
-      <label for="usuario" class="form-label">Correo</label>
-      <input type="email" class="form-control" id="usuario" placeholder="Ingresa tu correo" required>
+  <div class="login-container">
+    <h2><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</h2>
+    <form id="loginForm">
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo</label>
+        <input type="email" class="form-control" id="email" placeholder="ejemplo@correo.com" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="password" placeholder="•••••••" required>
+      </div>
+      <button type="submit" class="btn btn-neon">Ingresar</button>
+    </form>
+    <div class="text-center mt-3">
+      <a href="index.html"><i class="bi bi-arrow-left-circle"></i> Volver</a>
     </div>
-    <div class="mb-3">
-      <label for="password" class="form-label">Contraseña</label>
-      <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña" required>
-    </div>
-    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-  </form>
-
-  <div class="text-center mt-3">
-    <a href="index.html">⬅️ Volver</a>
   </div>
-</div>
 
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } 
-    from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+  <script>
+    const emailDemo = "omar@gmail.com";
+    const passwordDemo = "123456";
 
-  // Tu configuración
-  const firebaseConfig = {
-    apiKey: "AIzaSyBAP3fjuvI7UT9IptOzL_Zw24VvNiLsBYQ",
-    authDomain: "trabajo-33782.firebaseapp.com",
-    projectId: "trabajo-33782",
-    storageBucket: "trabajo-33782.appspot.com",
-    messagingSenderId: "191927594007",
-    appId: "1:191927594007:web:b11b2e0ebc3d49069e8052"
-  };
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-  // Inicializar
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-  // Login
-  document.getElementById("loginForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("usuario").value;
-    const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        alert("✅ Bienvenido " + userCredential.user.email);
-        window.location.href = "index.html"; // redirige al index
-      })
-      .catch(error => {
-        alert("❌ Error: " + error.message);
-      });
-  });
-</script>
+      if (email === emailDemo && password === passwordDemo) {
+        window.location.href = "semana1.html";
+      } else {
+        alert("❌ Usuario o contraseña incorrectos");
+      }
+    });
+  </script>
 
 </body>
 </html>
