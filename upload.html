@@ -103,15 +103,18 @@
     getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, deleteDoc, doc 
   } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
   import { 
-    getAuth, signInWithEmailAndPassword, onAuthStateChanged 
+    getAuth, onAuthStateChanged 
   } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+  import { 
+    getStorage, ref, uploadBytes, getDownloadURL 
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
   // Configuración Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyDGayNF28OA_WLc0hSTtATeDHDrPK2r2vY",
     authDomain: "trabajo-3d72f.firebaseapp.com",
     projectId: "trabajo-3d72f",
-    storageBucket: "trabajo-3d72f.firebasestorage.app",
+    storageBucket: "trabajo-3d72f.appspot.com",  // ✅ corregido .app -> .appspot.com
     messagingSenderId: "1041599599176",
     appId: "1:1041599599176:web:ac463901916c8c91a3be7d",
     measurementId: "G-WE0X8C5X2Z"
@@ -120,6 +123,7 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
+  const storage = getStorage(app);
 
   const form = document.getElementById("formUpload");
   const estado = document.getElementById("estado");
@@ -139,7 +143,7 @@
     }
   });
 
-  // Subir archivo
+  // Subir archivo con Storage + Firestore
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -156,19 +160,28 @@
     estado.style.color = "orange";
 
     try {
+      // 📌 1. Subir a Storage en carpeta "archivos/"
+      const archivoRef = ref(storage, `archivos/${Date.now()}_${archivo.name}`);
+      await uploadBytes(archivoRef, archivo);
+
+      // 📌 2. Obtener la URL de descarga
+      const url = await getDownloadURL(archivoRef);
+
+      // 📌 3. Guardar en Firestore junto con la URL
       await addDoc(collection(db, "archivos"), {
         NombreArchivo: archivo.name,
         semana: semana,
         fecha: serverTimestamp(),
-        tipo: archivo.type || "desconocido"
+        tipo: archivo.type || "desconocido",
+        url: url
       });
 
-      estado.textContent = "✅ Archivo registrado en Firestore.";
+      estado.textContent = "✅ Archivo subido y registrado.";
       estado.style.color = "lime";
       form.reset();
     } catch (err) {
       console.error("Error al subir:", err);
-      estado.textContent = "❌ Error al registrar el archivo.";
+      estado.textContent = "❌ Error al subir el archivo.";
       estado.style.color = "red";
     }
   });
@@ -178,7 +191,6 @@
     const q = query(collection(db, "archivos"), where("semana", "==", semana));
     onSnapshot(q, (snapshot) => {
       listaArchivos.innerHTML = "";
-      let i = 1;
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const fecha = data.fecha?.toDate ? data.fecha.toDate().toLocaleString() : "Sin fecha";
