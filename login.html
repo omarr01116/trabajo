@@ -84,21 +84,42 @@
     </div>
   </div>
 
-  <script>
-    const emailDemo = "omar@gmail.com";
-    const passwordDemo = "123456";
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Importar Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
+    // Configuración de Firebase (tuya)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAP3fjuvI7UT9IptOzL_Zw24VvNiLsBYQ",
+      authDomain: "trabajo-33782.firebaseapp.com",
+      projectId: "trabajo-33782",
+      storageBucket: "trabajo-33782.firebasestorage.app",
+      messagingSenderId: "191927594007",
+      appId: "1:191927594007:web:b11b2e0ebc3d49069e8052",
+      measurementId: "G-QRPZWZWYP4"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Login con Firebase
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      if (email === emailDemo && password === passwordDemo) {
-        window.location.href = "semana1.html";
-      } else {
-        alert("❌ Usuario o contraseña incorrectos");
-      }
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Login correcto → redirigir
+          window.location.href = "semana1.html";
+        })
+        .catch((error) => {
+          alert("❌ Error: " + error.message);
+        });
     });
   </script>
 
