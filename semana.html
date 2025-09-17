@@ -4,94 +4,151 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Archivos por Semana</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #0ff;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #0ff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.3);
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #0ff;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .btn-custom {
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+    }
+    .btn-custom:hover {
+      background: #00cccc;
+      color: #fff;
+    }
+    .archivo-item {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border-left: 3px solid #0ff;
+    }
+    .archivo-item strong {
+      color: #0ff;
+    }
+    iframe, img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h2>📂 Archivos de <span id="titulo-semana"></span></h2>
-  <button onclick="window.location.href='index.html'">⬅ Volver al Inicio</button>
 
-  <table border="1" style="margin-top:20px; width:80%; text-align:center;">
-    <thead>
-      <tr>
-        <th>Archivo</th>
-        <th>Fecha</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="lista-archivos">
-    </tbody>
-  </table>
+  <div class="container">
+    <h2 id="tituloSemana">📂 Archivos</h2>
 
+    <div class="card">
+      <button id="btnVolver" class="btn btn-custom w-100">⬅️ Volver al inicio</button>
+    </div>
+
+    <div id="listaArchivos" class="mt-4"></div>
+  </div>
+
+  <!-- Firebase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } 
-      from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    // 🔹 Configuración de Firebase
+    // Configuración Firebase
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_AUTH_DOMAIN",
-      projectId: "TU_PROJECT_ID",
+      apiKey: "AIzaSyDGayNF28OA_WLc0hSTtATeDHDrPK2r2vY",
+      authDomain: "trabajo-3d72f.firebaseapp.com",
+      projectId: "trabajo-3d72f",
+      storageBucket: "trabajo-3d72f.firebasestorage.app",
+      messagingSenderId: "1041599599176",
+      appId: "1:1041599599176:web:ac463901916c8c91a3be7d",
+      measurementId: "G-WE0X8C5X2Z"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 🔹 Leer parámetros de la URL
+    // Botón volver
+    document.getElementById("btnVolver").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    // Obtener parámetro de semana desde la URL
     const params = new URLSearchParams(window.location.search);
-    const semanaSeleccionada = params.get("semana"); // ej: "2"
-    const semanaTexto = "Semana " + semanaSeleccionada; // ej: "Semana 2"
+    const semanaSeleccionada = params.get("semana");
 
-    document.getElementById("titulo-semana").innerText = semanaTexto;
+    const titulo = document.getElementById("tituloSemana");
+    const listaArchivos = document.getElementById("listaArchivos");
 
-    const listaArchivos = document.getElementById("lista-archivos");
-
-    async function cargarArchivos() {
-      listaArchivos.innerHTML = "";
-
-      const q = query(
-        collection(db, "archivos"),
-        where("semana", "==", semanaTexto) // ✅ aquí usamos "Semana X"
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        listaArchivos.innerHTML = `
-          <tr><td colspan="3">⚠ No hay archivos en ${semanaTexto}.</td></tr>`;
-        return;
-      }
-
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-
-        // 🔹 Convertir timestamp a fecha legible
-        let fechaLegible = "";
-        if (data.fecha && data.fecha.toDate) {
-          fechaLegible = data.fecha.toDate().toLocaleString();
-        }
-
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${data.NombreArchivo}</td>
-          <td>${fechaLegible}</td>
-          <td><button onclick="borrarArchivo('${docSnap.id}')">Borrar</button></td>
-        `;
-        listaArchivos.appendChild(fila);
-      });
+    if (!semanaSeleccionada) {
+      titulo.textContent = "⚠️ Semana no especificada";
+    } else {
+      titulo.textContent = `📂 Archivos de ${semanaSeleccionada}`;
+      cargarArchivos(semanaSeleccionada);
     }
 
-    // 🔹 Función para borrar un archivo
-    window.borrarArchivo = async function (id) {
-      if (confirm("¿Seguro que deseas borrar este archivo?")) {
-        await deleteDoc(doc(db, "archivos", id));
-        cargarArchivos(); // refresca la tabla
-      }
-    };
+    async function cargarArchivos(semana) {
+      listaArchivos.innerHTML = "<p style='color:yellow'>⏳ Cargando...</p>";
 
-    cargarArchivos();
+      try {
+        const q = query(collection(db, "archivos"), where("semana", "==", semana));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          listaArchivos.innerHTML = `<p style='color:orange'>⚠️ No hay archivos en ${semana}.</p>`;
+          return;
+        }
+
+        listaArchivos.innerHTML = "";
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+
+          const div = document.createElement("div");
+          div.classList.add("archivo-item");
+
+          let previewHTML = `<p style="color:#aaa">🔗 Vista previa no disponible</p>`;
+          if (data.tipo?.includes("image")) {
+            previewHTML = `<img src="${data.NombreArchivo}" alt="Imagen">`;
+          } else if (data.tipo?.includes("pdf")) {
+            previewHTML = `<iframe src="${data.NombreArchivo}" height="300"></iframe>`;
+          } else if (data.tipo?.includes("text")) {
+            previewHTML = `<iframe src="${data.NombreArchivo}" height="150"></iframe>`;
+          }
+
+          div.innerHTML = `
+            <p><strong>📄 Archivo:</strong> ${data.NombreArchivo}</p>
+            <p><strong>Semana:</strong> ${data.semana}</p>
+            <p><strong>Fecha:</strong> ${data.fecha?.toDate ? data.fecha.toDate().toLocaleString() : "Sin fecha"}</p>
+            <div class="mb-2">
+              <a href="${data.NombreArchivo}" target="_blank" class="btn btn-sm btn-success">👁️ Ver</a>
+              <a href="${data.NombreArchivo}" download="${data.NombreArchivo}" class="btn btn-sm btn-primary">⬇️ Descargar</a>
+            </div>
+            ${previewHTML}
+          `;
+
+          listaArchivos.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error al cargar archivos:", err);
+        listaArchivos.innerHTML = "<p style='color:red'>❌ Error al cargar los archivos.</p>";
+      }
+    }
   </script>
 </body>
 </html>
