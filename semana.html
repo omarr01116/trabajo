@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Archivos por Semana</title>
+  <title>Archivos de la Semana</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -19,6 +19,7 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 0 15px rgba(0,255,255,0.3);
+      margin-bottom: 20px;
     }
     h2 {
       color: #0ff;
@@ -64,18 +65,10 @@
 <body>
 
   <div class="container">
-    <h2>📂 Archivos por Semana</h2>
+    <h2 id="tituloSemana">📂 Archivos</h2>
 
-    <div class="card">
-      <label for="semanaSelect" class="form-label">Seleccionar semana</label>
-      <select id="semanaSelect" class="form-select mb-3">
-        <option value="Semana 1">Semana 1</option>
-        <option value="Semana 2">Semana 2</option>
-        <option value="Semana 3">Semana 3</option>
-        <option value="Semana 4">Semana 4</option>
-      </select>
-
-      <button id="btnMostrar" class="btn btn-custom w-100">Mostrar Archivos</button>
+    <div class="text-center mb-3">
+      <a href="index.html" class="btn btn-custom">⬅️ Volver al Inicio</a>
     </div>
 
     <div id="listaArchivos" class="mt-4"></div>
@@ -103,11 +96,21 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const btnMostrar = document.getElementById("btnMostrar");
     const listaArchivos = document.getElementById("listaArchivos");
+    const tituloSemana = document.getElementById("tituloSemana");
 
-    btnMostrar.addEventListener("click", async () => {
-      const semana = document.getElementById("semanaSelect").value;
+    // Leer semana desde la URL
+    const params = new URLSearchParams(window.location.search);
+    const semana = params.get("semana");
+
+    if (!semana) {
+      listaArchivos.innerHTML = "<p style='color:red'>❌ No se especificó la semana.</p>";
+    } else {
+      tituloSemana.textContent = `📂 Archivos de ${semana}`;
+      cargarArchivos(semana);
+    }
+
+    async function cargarArchivos(semana) {
       listaArchivos.innerHTML = "<p style='color:yellow'>⏳ Cargando...</p>";
 
       try {
@@ -115,7 +118,7 @@
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          listaArchivos.innerHTML = "<p style='color:orange'>⚠️ No hay archivos en " + semana + ".</p>";
+          listaArchivos.innerHTML = `<p style='color:orange'>⚠️ No hay archivos en ${semana}.</p>`;
           return;
         }
 
@@ -157,7 +160,7 @@
         console.error("Error al cargar archivos:", err);
         listaArchivos.innerHTML = "<p style='color:red'>❌ Error al cargar los archivos.</p>";
       }
-    });
+    }
   </script>
 </body>
 </html>
