@@ -98,13 +98,12 @@
       estado.style.color = "orange";
 
       try {
-        // Subir solo los metadatos porque no usas Storage
+        // Subir metadatos (sin URL porque no usas Storage)
         await addDoc(collection(db, "archivos"), {
           NombreArchivo: archivo.name,
           semana: semana,
-          fecha: serverTimestamp(), // Timestamp válido
-          tipo: archivo.type || "desconocido",
-          url: archivo.name // Solo guardamos el nombre, no el archivo
+          fecha: serverTimestamp(),
+          tipo: archivo.type || "desconocido"
         });
 
         estado.textContent = "✅ Archivo registrado en Firestore.";
