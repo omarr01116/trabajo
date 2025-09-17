@@ -10,13 +10,13 @@
       background-color: #0d0d0d;
       color: #0ff;
       font-family: Arial, sans-serif;
-      padding: 20px;
     }
     .card {
       background: #111;
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 0 20px #0ff;
+      margin: 15px;
     }
     .btn-custom {
       background: #0ff;
@@ -28,19 +28,21 @@
       background: #00cccc;
       color: #fff;
     }
-    h2, h3 {
-      color: #0ff;
+    .btn-danger {
+      font-size: 0.8rem;
+      padding: 4px 8px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="row g-4">
-    <!-- Subir Archivos -->
+<div class="container py-4">
+  <div class="row">
+    
+    <!-- Subir archivos -->
     <div class="col-md-5">
       <div class="card">
-        <h2 class="mb-3">🚀 Subir Trabajo</h2>
+        <h3 class="mb-3">🚀 Subir Trabajo</h3>
         <form id="formUpload">
           <div class="mb-3">
             <label for="semana" class="form-label">Seleccionar semana</label>
@@ -63,42 +65,46 @@
       </div>
     </div>
 
-    <!-- Lista de Archivos -->
+    <!-- Lista de archivos -->
     <div class="col-md-7">
       <div class="card">
-        <h3>📂 Archivos Subidos</h3>
+        <h3 class="mb-3">📂 Archivos por semana</h3>
         <div class="mb-3">
           <label for="filtroSemana" class="form-label">Filtrar por semana</label>
           <select id="filtroSemana" class="form-select">
-            <option value="Todos">Todos</option>
             <option value="Semana 1">Semana 1</option>
             <option value="Semana 2">Semana 2</option>
             <option value="Semana 3">Semana 3</option>
             <option value="Semana 4">Semana 4</option>
           </select>
         </div>
-        <table class="table table-dark table-hover">
+        <table class="table table-dark table-sm">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Semana</th>
+              <th>Archivo</th>
               <th>Fecha</th>
-              <th>Acciones</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody id="listaArchivos">
-            <tr><td colspan="4" class="text-center">⏳ Cargando...</td></tr>
+            <!-- Aquí se listan los archivos -->
           </tbody>
         </table>
       </div>
     </div>
+
   </div>
 </div>
 
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+  import { 
+    getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, deleteDoc, doc 
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+  import { 
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged 
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
   // Configuración Firebase
   const firebaseConfig = {
@@ -113,11 +119,25 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const form = document.getElementById("formUpload");
   const estado = document.getElementById("estado");
   const listaArchivos = document.getElementById("listaArchivos");
   const filtroSemana = document.getElementById("filtroSemana");
+
+  let userUID = null;
+
+  // 🔑 Detectar usuario logueado
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userUID = user.uid;
+      console.log("Usuario logueado:", user.email, "UID:", userUID);
+      cargarArchivos(filtroSemana.value);
+    } else {
+      alert("⚠️ No estás logueado, inicia sesión.");
+    }
+  });
 
   // Subir archivo
   form.addEventListener("submit", async (e) => {
@@ -145,7 +165,7 @@
 
       estado.textContent = "✅ Archivo registrado en Firestore.";
       estado.style.color = "lime";
-      cargarArchivos(); // refrescar tabla
+      form.reset();
     } catch (err) {
       console.error("Error al subir:", err);
       estado.textContent = "❌ Error al registrar el archivo.";
@@ -153,46 +173,45 @@
     }
   });
 
-  // Cargar archivos
-  async function cargarArchivos() {
-    listaArchivos.innerHTML = "<tr><td colspan='4' class='text-center'>⏳ Cargando...</td></tr>";
-    const querySnapshot = await getDocs(collection(db, "archivos"));
-
-    let rows = "";
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const fecha = data.fecha?.toDate ? data.fecha.toDate().toLocaleString() : "N/A";
-
-      // Filtrar por semana
-      if (filtroSemana.value !== "Todos" && data.semana !== filtroSemana.value) return;
-
-      rows += `
-        <tr>
+  // Cargar archivos por semana
+  function cargarArchivos(semana) {
+    const q = query(collection(db, "archivos"), where("semana", "==", semana));
+    onSnapshot(q, (snapshot) => {
+      listaArchivos.innerHTML = "";
+      let i = 1;
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const fecha = data.fecha?.toDate ? data.fecha.toDate().toLocaleString() : "Sin fecha";
+        
+        const row = document.createElement("tr");
+        row.innerHTML = `
           <td>${data.NombreArchivo}</td>
-          <td>${data.semana}</td>
           <td>${fecha}</td>
           <td>
-            <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${docSnap.id}')">🗑️ Eliminar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${docSnap.id}')">Borrar</button>
           </td>
-        </tr>
-      `;
+        `;
+        listaArchivos.appendChild(row);
+      });
     });
-
-    listaArchivos.innerHTML = rows || "<tr><td colspan='4' class='text-center'>📭 No hay archivos</td></tr>";
   }
 
-  // Eliminar archivo
+  // Cambiar semana en filtro
+  filtroSemana.addEventListener("change", () => {
+    cargarArchivos(filtroSemana.value);
+  });
+
+  // Eliminar archivo (solo si reglas lo permiten)
   window.eliminarArchivo = async (id) => {
-    if (confirm("¿Seguro que deseas eliminar este archivo?")) {
+    try {
       await deleteDoc(doc(db, "archivos", id));
-      cargarArchivos();
+      alert("✅ Archivo eliminado.");
+    } catch (err) {
+      console.error("Error al eliminar:", err);
+      alert("❌ No tienes permisos para borrar.");
     }
   };
-
-  filtroSemana.addEventListener("change", cargarArchivos);
-
-  // Primera carga
-  cargarArchivos();
 </script>
+
 </body>
 </html>
