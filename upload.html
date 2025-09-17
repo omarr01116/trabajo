@@ -63,9 +63,9 @@
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    // Configuración de Firebase
+    // Configuración Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDGayNF28OA_WLc0hSTtATeDHDrPK2r2vY",
       authDomain: "trabajo-3d72f.firebaseapp.com",
@@ -79,7 +79,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Formulario
     const form = document.getElementById("formUpload");
     const estado = document.getElementById("estado");
 
@@ -88,7 +87,6 @@
 
       const archivo = document.getElementById("archivo").files[0];
       const semana = document.getElementById("semana").value;
-      const fecha = new Date().toISOString();
 
       if (!archivo) {
         estado.textContent = "⚠️ Selecciona un archivo.";
@@ -96,41 +94,26 @@
         return;
       }
 
-      // Validar tamaño (Firestore máx 1MB por documento)
-      if (archivo.size > 1024 * 1024) {
-        estado.textContent = "⚠️ El archivo es demasiado grande (máx 1 MB).";
-        estado.style.color = "red";
-        return;
-      }
-
       estado.textContent = "⏳ Subiendo...";
       estado.style.color = "orange";
 
-      // Convertir a Base64
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const base64 = reader.result.split(",")[1]; // quitar encabezado
+      try {
+        // Subir solo los metadatos porque no usas Storage
+        await addDoc(collection(db, "archivos"), {
+          NombreArchivo: archivo.name,
+          semana: semana,
+          fecha: serverTimestamp(), // Timestamp válido
+          tipo: archivo.type || "desconocido",
+          url: archivo.name // Solo guardamos el nombre, no el archivo
+        });
 
-        try {
-          await addDoc(collection(db, "archivos"), {
-            NombreArchivo: archivo.name,
-            semana: semana,
-            fecha: fecha,
-            tipo: archivo.type,
-            archivo: base64
-          });
-
-          estado.textContent = "✅ Archivo registrado en Firestore.";
-          estado.style.color = "lime";
-          form.reset();
-        } catch (err) {
-          console.error("Error al subir:", err);
-          estado.textContent = "❌ Error al registrar el archivo.";
-          estado.style.color = "red";
-        }
-      };
-
-      reader.readAsDataURL(archivo);
+        estado.textContent = "✅ Archivo registrado en Firestore.";
+        estado.style.color = "lime";
+      } catch (err) {
+        console.error("Error al subir:", err);
+        estado.textContent = "❌ Error al registrar el archivo.";
+        estado.style.color = "red";
+      }
     });
   </script>
 </body>
