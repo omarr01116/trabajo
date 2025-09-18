@@ -32,10 +32,13 @@
       font-size: 0.8rem;
       padding: 4px 8px;
     }
-    /* 🔙 Botón de volver */
+    /* 🔙 Botón de volver (parte superior derecha) */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
     .back-btn {
-      margin-top: 20px;
-      display: inline-block;
       padding: 8px 20px;
       color: #0ff;
       border: 1px solid #0ff;
@@ -54,6 +57,11 @@
 <body>
 
 <div class="container py-4">
+  <!-- 🔙 Botón volver arriba a la derecha -->
+  <div class="top-bar">
+    <a href="index.html" class="back-btn">← Volver</a>
+  </div>
+
   <div class="row">
     
     <!-- Subir archivos -->
@@ -79,8 +87,6 @@
           <button type="submit" class="btn btn-custom w-100">Subir</button>
         </form>
         <p id="estado" class="mt-3"></p>
-        <!-- 🔙 Botón volver -->
-        <a href="index.html" class="back-btn">← Volver</a>
       </div>
     </div>
 
@@ -109,8 +115,6 @@
             <!-- Aquí se listan los archivos -->
           </tbody>
         </table>
-        <!-- 🔙 Botón volver -->
-        <a href="index.html" class="back-btn">← Volver</a>
       </div>
     </div>
 

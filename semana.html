@@ -56,26 +56,16 @@
   </div>
 </div>
 
-<!-- Firebase -->
+<!-- Supabase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  // Configuración Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDGayNF28OA_WLc0hSTtATeDHDrPK2r2vY",
-    authDomain: "trabajo-3d72f.firebaseapp.com",
-    projectId: "trabajo-3d72f",
-    storageBucket: "trabajo-3d72f.appspot.com",
-    messagingSenderId: "1041599599176",
-    appId: "1:1041599599176:web:ac463901916c8c91a3be7d",
-    measurementId: "G-WE0X8C5X2Z"
-  };
+  // 🔑 Configuración Supabase
+  const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Obtener semana desde la URL
+  // 📌 Obtener semana desde la URL
   const params = new URLSearchParams(window.location.search);
   const semana = "Semana " + (params.get("semana") || "1");
 
@@ -83,14 +73,24 @@
 
   const listaArchivos = document.getElementById("listaArchivos");
 
-  // Cargar archivos de esa semana
+  // 📂 Cargar archivos de esa semana
   async function cargarArchivos() {
-    const q = query(collection(db, "archivos"), where("semana", "==", semana));
-    const querySnapshot = await getDocs(q);
+    const { data, error } = await supabase.storage
+      .from("archivos")
+      .list(semana, { limit: 100 });
 
     listaArchivos.innerHTML = "";
 
-    if (querySnapshot.empty) {
+    if (error) {
+      listaArchivos.innerHTML = `
+        <div class="col-12 text-center text-danger">
+          <p>❌ Error al listar: ${error.message}</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (!data || data.length === 0) {
       listaArchivos.innerHTML = `
         <div class="col-12 text-center text-muted">
           <p>⚠️ No hay archivos para esta semana.</p>
@@ -99,27 +99,29 @@
       return;
     }
 
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const fecha = data.fecha?.toDate ? data.fecha.toDate().toLocaleString() : "Sin fecha";
-      const url = data.url || "#";
+    for (const file of data) {
+      const { data: urlData } = await supabase.storage
+        .from("archivos")
+        .getPublicUrl(`${semana}/${file.name}`);
+
+      const fecha = new Date(file.created_at || Date.now()).toLocaleString();
 
       const col = document.createElement("div");
       col.className = "col-md-4";
 
       col.innerHTML = `
         <div class="card h-100 p-3 text-center">
-          <h5 class="card-title">${data.NombreArchivo}</h5>
+          <h5 class="card-title">${file.name}</h5>
           <p class="card-text"><small>${fecha}</small></p>
           <div class="d-grid gap-2">
-            <a href="${url}" target="_blank" class="btn btn-custom">👁 Ver</a>
-            <a href="${url}" download="${data.NombreArchivo}" class="btn btn-custom">⬇ Descargar</a>
+            <a href="${urlData.publicUrl}" target="_blank" class="btn btn-custom">👁 Ver</a>
+            <a href="${urlData.publicUrl}" download="${file.name}" class="btn btn-custom">⬇ Descargar</a>
           </div>
         </div>
       `;
 
       listaArchivos.appendChild(col);
-    });
+    }
   }
 
   cargarArchivos();
