@@ -2,7 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // 🔑 Configuración Supabase
 const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
-const SUPABASE_ANON_KEY = "TU_ANON_KEY_COMPLETA"; // pon aquí la key completa
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 📌 Obtener número de semana desde la URL
@@ -16,59 +17,54 @@ document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
+// 📂 Función para listar archivos recursivamente (subcarpetas incluidas)
+async function listarArchivosRecursivo(path = carpeta) {
+  const { data, error } = await supabase.storage
+    .from("archivos")
+    .list(path, { limit: 100 });
+
+  if (error) {
+    console.error("❌ Error al listar:", error.message);
+    return [];
+  }
+
+  let archivos = [];
+
+  for (const item of data) {
+    if (item.name.endsWith("/")) {
+      // Si es carpeta → buscar dentro
+      const subPath = `${path}/${item.name}`;
+      const subArchivos = await listarArchivosRecursivo(subPath);
+      archivos = archivos.concat(subArchivos);
+    } else {
+      archivos.push({ path, name: item.name });
+    }
+  }
+
+  return archivos;
+}
+
 // 📂 Cargar archivos de esa semana
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
-  // Intentamos listar dentro de la carpeta
-  let { data, error } = await supabase.storage
-    .from("archivos")
-    .list(carpeta, { limit: 100 });
+  const archivos = await listarArchivosRecursivo();
 
-  if (error) {
-    console.error("❌ Error al listar:", error);
+  listaArchivos.innerHTML = "";
+
+  if (archivos.length === 0) {
     listaArchivos.innerHTML = `
-      <div class="col-12 text-center text-danger">
-        <p>❌ Error al listar: ${error.message}</p>
+      <div class="col-12 text-center text-muted">
+        <p>⚠️ No hay archivos en la carpeta "${carpeta}".</p>
       </div>
     `;
     return;
   }
 
-  // Si no hay nada en la carpeta, probamos en la raíz
-  if (!data || data.length === 0) {
-    console.warn(`⚠️ No hay archivos en "${carpeta}", probando en raíz...`);
-
-    const root = await supabase.storage
-      .from("archivos")
-      .list("", { limit: 100 });
-
-    data = root.data;
-    error = root.error;
-
-    if (error) {
-      listaArchivos.innerHTML = `<p class="text-danger">❌ ${error.message}</p>`;
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      listaArchivos.innerHTML = `
-        <div class="col-12 text-center text-muted">
-          <p>⚠️ No hay archivos en el bucket.</p>
-        </div>
-      `;
-      return;
-    }
-  }
-
-  listaArchivos.innerHTML = "";
-
-  for (const file of data) {
-    if (file.name.endsWith("/")) continue; // evitar carpetas
-
+  for (const file of archivos) {
     const { data: urlData } = supabase.storage
       .from("archivos")
-      .getPublicUrl(`${carpeta}/${file.name}`);
+      .getPublicUrl(`${file.path}/${file.name}`);
 
     const verUrl = urlData?.publicUrl || "#";
     const descargarUrl = `${verUrl}?download=${file.name}`;
@@ -105,7 +101,9 @@ function mostrarPreview(url, name) {
   } else if (name.match(/\.(mp4|webm)$/i)) {
     previewContent = `<video src="${url}" controls class="w-100 rounded shadow"></video>`;
   } else if (name.match(/\.(docx|doc|pptx|ppt|xlsx|xls)$/i)) {
-    previewContent = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true" title="Vista previa Office"></iframe>`;
+    previewContent = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(
+      url
+    )}&embedded=true" title="Vista previa Office"></iframe>`;
   } else if (name.endsWith(".txt")) {
     previewContent = `<iframe src="${url}" title="Vista previa TXT"></iframe>`;
   } else {
