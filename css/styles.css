@@ -1,10 +1,7 @@
-/* Reset */
 body {
   background-color: #0d0d0d;
   color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 /* Navbar */
@@ -17,90 +14,92 @@ body {
   color: #0ff !important;
   text-shadow: 0 0 10px #0ff;
 }
-.nav-link {
-  color: #e0e0e0 !important;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-.nav-link:hover {
-  color: #0ff !important;
-}
-.btn-outline-light {
+.btn-login {
   border: 1px solid #0ff;
   color: #0ff;
-}
-.btn-outline-light:hover {
-  background: #0ff;
-  color: #000;
-}
-.btn-primary {
-  background: #0ff;
-  border: none;
-  color: #000;
   font-weight: bold;
   transition: 0.3s;
 }
-.btn-primary:hover {
-  background: #ff00ff;
-  color: #fff;
+.btn-login:hover {
+  background: #0ff;
+  color: #000;
+  box-shadow: 0 0 10px #0ff;
 }
 
 /* Hero */
 .hero {
-  height: 90vh;
-  background: url("fondo.jpg") center/cover no-repeat, #111;
-  color: #fff;
-  padding: 2rem;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
-.subtitle {
-  font-size: 1rem;
-  color: #aaa;
-}
-.title {
-  font-size: 3rem;
+.hero h1 {
+  font-size: 2.5rem;
   font-weight: bold;
-  margin: 1rem 0;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
 }
 
-/* Features */
-.features {
-  background: #111;
-  padding: 2rem;
-}
-.feature {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 1rem 2rem;
-  border-radius: 25px;
-  font-weight: 500;
-  color: #fff;
+/* Botón hamburguesa */
+.menu-btn {
+  background: none;
+  border: 2px solid #0ff;
+  color: #0ff;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
   transition: 0.3s;
+  border-radius: 6px;
 }
-.feature:hover {
+.menu-btn:hover {
   background: #0ff;
   color: #000;
+  box-shadow: 0 0 15px #0ff;
+}
+
+/* Menú desplegable */
+.menu-items {
+  display: none;
+  margin-top: 1rem;
+  text-align: left;
+}
+.menu-items .menu-link {
+  display: block;
+  margin: 0.5rem 0;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: 0.3s;
+}
+.menu-items .menu-link:hover {
+  background: #0ff;
+  color: #000;
+}
+
+/* Botones de semanas */
+.btn-ver {
+  background: #0ff;
+  color: #000;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+.btn-ver:hover {
+  background: #ff00ff;
+  color: #fff;
+  box-shadow: 0 0 15px #ff00ff;
 }
 
 /* Cards */
 .card {
   background: #1a1a1a;
   border: none;
-  border-radius: 15px;
+  border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.card:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
 }
 .card-title {
   color: #ff00ff;
-  font-weight: bold;
-}
-
-/* Footer */
-footer {
-  background: #111;
-  color: #777;
-  border-top: 1px solid #333;
 }
