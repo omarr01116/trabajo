@@ -1,131 +1,130 @@
-/* ----- Reset ----- */
+/* ----- Reset & base ----- */
 body {
   margin: 0;
-  padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #eaac8b 0%, #fdfdfd 100%);
   color: #355070;
-  background: #fdfdfd; /* base neutra */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* ----- Encabezado ----- */
-header {
+/* ----- Navbar ----- */
+.navbar {
   background: #355070;
+}
+
+.navbar .navbar-brand {
   color: #fff;
-  padding: 20px 40px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  transition: color 0.3s;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 600;
-  letter-spacing: 1px;
+.navbar .navbar-brand:hover {
+  color: #eaac8b;
 }
 
-/* ----- Hero (intro) ----- */
-.hero {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 60px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, #eaac8b, #fdfdfd);
-}
-
-.hero-content {
-  max-width: 600px;
-}
-
-.hero-content h2 {
-  font-size: 1.3rem;
-  font-weight: 400;
-  color: #6d597a;
-  margin-bottom: 25px;
-}
-
-/* ----- Botón Contacto ----- */
-.btn-contact {
-  display: inline-block;
-  padding: 12px 30px;
+.btn-login {
   background: #e56b6f;
   color: #fff;
-  font-size: 1rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 25px;
-  text-decoration: none;
+  border-radius: 20px;
+  padding: 6px 16px;
   transition: all 0.3s ease;
 }
 
-.btn-contact:hover {
+.btn-login:hover {
   background: #b56576;
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
-/* ----- Sección semanas ----- */
-.semanas {
-  padding: 50px 20px;
-  background: #fff;
-}
-
-.semanas h3 {
-  text-align: center;
-  font-size: 1.6rem;
-  margin-bottom: 30px;
+/* ----- Hero ----- */
+.hero {
+  background: url("https://www.toptal.com/designers/subtlepatterns/patterns/memphis-mini.png");
+  background-size: cover;
+  background-position: center;
   color: #355070;
+  padding: 100px 20px;
 }
 
-.semana-card {
-  background: #f9f9f9;
-  border: 1px solid #eaac8b;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 15px auto;
-  max-width: 320px;
-  text-align: center;
-  transition: transform 0.3s ease;
+.hero h1 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #355070;
+  animation: fadeDown 1s ease;
 }
 
-.semana-card:hover {
-  transform: scale(1.03);
-}
-
-.semana-card h4 {
-  margin: 0 0 10px;
+.hero p {
+  font-size: 1.1rem;
   color: #6d597a;
+  animation: fadeUp 1.2s ease;
 }
 
-.semana-card p {
-  color: #555;
-  font-size: 0.9rem;
-}
-
-.semana-card a {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 8px 18px;
+.btn-contacto {
   background: #355070;
   color: #fff;
+  border-radius: 25px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-contacto:hover {
+  background: #6d597a;
+  transform: scale(1.05);
+}
+
+/* ----- Sección Semanas ----- */
+#semanas h2 {
+  color: #355070;
+  font-weight: bold;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.card-title {
+  color: #6d597a;
+  font-weight: 600;
+}
+
+.btn-semana {
+  background: #e56b6f;
+  color: #fff;
   border-radius: 20px;
-  text-decoration: none;
-  font-size: 0.9rem;
+  padding: 8px 18px;
   transition: all 0.3s;
 }
 
-.semana-card a:hover {
-  background: #6d597a;
+.btn-semana:hover {
+  background: #b56576;
+  transform: translateY(-2px);
 }
 
 /* ----- Footer ----- */
 footer {
   background: #355070;
   color: #fff;
-  text-align: center;
-  padding: 15px;
   font-size: 0.9rem;
+  margin-top: auto;
+}
+
+/* ----- Animaciones ----- */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
