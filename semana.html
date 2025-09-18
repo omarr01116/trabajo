@@ -68,15 +68,12 @@
     }
 
     for (const file of data) {
-      // Generar URL pública
+      // ✅ Generar URL pública
       const { data: urlData } = supabase.storage
         .from("archivos")
         .getPublicUrl(`${carpeta}/${file.name}`);
 
       const url = urlData?.publicUrl || "#";
-      const fecha = file.created_at
-        ? new Date(file.created_at).toLocaleString()
-        : "Sin fecha";
 
       const col = document.createElement("div");
       col.className = "col-md-4";
@@ -84,10 +81,9 @@
       col.innerHTML = `
         <div class="card h-100 p-3 text-center">
           <h5 class="card-title">${file.name}</h5>
-          <p class="card-text"><small>${fecha}</small></p>
-          <div class="d-grid gap-2">
+          <div class="d-grid gap-2 mt-2">
             <a href="${url}" target="_blank" class="btn btn-primary">👁 Ver</a>
-            <a href="${url}" download="${file.name}" class="btn btn-success">⬇ Descargar</a>
+            <a href="${url}" class="btn btn-success" download>⬇ Descargar</a>
           </div>
         </div>
       `;
