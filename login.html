@@ -115,23 +115,14 @@
     <a href="index.html" class="back-btn">← Volver</a>
   </div>
 
-  <!-- Firebase -->
+  <!-- Supabase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDGayNF28OA_WLc0hSTtATeDHDrPK2r2vY",
-      authDomain: "trabajo-3d72f.firebaseapp.com",
-      projectId: "trabajo-3d72f",
-      storageBucket: "trabajo-3d72f.firebasestorage.app",
-      messagingSenderId: "1041599599176",
-      appId: "1:1041599599176:web:ac463901916c8c91a3be7d",
-      measurementId: "G-WE0X8C5X2Z"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    // 🔑 Tus credenciales de Supabase
+    const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById("loginForm");
     const errorMessage = document.getElementById("errorMessage");
@@ -142,11 +133,19 @@
       const password = document.getElementById("password").value;
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "upload.html"; // Redirige si el login es correcto
-      } catch (error) {
+        // 🔑 Intentar login con Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) throw error;
+
+        // ✅ Login correcto → redirigir
+        window.location.href = "upload.html";
+      } catch (err) {
         errorMessage.style.display = "block";
-        errorMessage.textContent = "⚠ " + error.message;
+        errorMessage.textContent = "⚠ " + err.message;
       }
     });
   </script>
