@@ -1,8 +1,9 @@
+<script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // 🔑 Configuración Supabase
 const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 📌 Obtener número de semana desde la URL
@@ -45,11 +46,13 @@ async function cargarArchivos() {
   }
 
   for (const file of data) {
-    const { data: urlData } = supabase.storage
+    // ✅ Fix para obtener la URL pública
+    const { data: urlData } = supabase
+      .storage
       .from("archivos")
       .getPublicUrl(`${carpeta}/${file.name}`);
 
-    const verUrl = urlData?.publicUrl || "#";
+    const verUrl = urlData.publicUrl;
     const descargarUrl = `${verUrl}?download=${file.name}`;
 
     const col = document.createElement("div");
@@ -101,3 +104,4 @@ function mostrarPreview(url, name) {
 }
 
 cargarArchivos();
+</script>
