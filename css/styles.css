@@ -1,9 +1,9 @@
-/* ----- Reset & base ----- */
+/* ----- Reset & Base ----- */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #eaac8b 0%, #fdfdfd 100%);
-  color: #355070;
+  background: linear-gradient(135deg, #ffb6c1 0%, #fdfdfd 100%);
+  color: #191970;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -11,7 +11,7 @@ body {
 
 /* ----- Navbar ----- */
 .navbar {
-  background: #355070;
+  background: #191970;
 }
 
 .navbar .navbar-brand {
@@ -21,11 +21,11 @@ body {
 }
 
 .navbar .navbar-brand:hover {
-  color: #eaac8b;
+  color: #ffb6c1;
 }
 
 .btn-login {
-  background: #e56b6f;
+  background: #e9967a;
   color: #fff;
   border-radius: 20px;
   padding: 6px 16px;
@@ -33,34 +33,36 @@ body {
 }
 
 .btn-login:hover {
-  background: #b56576;
+  background: #ffb6c1;
+  color: #191970;
   transform: translateY(-2px);
 }
 
 /* ----- Hero ----- */
 .hero {
-  background: url("https://www.toptal.com/designers/subtlepatterns/patterns/memphis-mini.png");
+  background: url("https://www.toptal.com/designers/subtlepatterns/patterns/crossword.png");
   background-size: cover;
   background-position: center;
-  color: #355070;
+  color: #191970;
   padding: 100px 20px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .hero h1 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: bold;
-  color: #355070;
+  color: #191970;
   animation: fadeDown 1s ease;
 }
 
 .hero p {
   font-size: 1.1rem;
-  color: #6d597a;
+  color: #444;
   animation: fadeUp 1.2s ease;
 }
 
 .btn-contacto {
-  background: #355070;
+  background: #191970;
   color: #fff;
   border-radius: 25px;
   padding: 10px 22px;
@@ -69,13 +71,14 @@ body {
 }
 
 .btn-contacto:hover {
-  background: #6d597a;
+  background: #e9967a;
+  color: #fff;
   transform: scale(1.05);
 }
 
 /* ----- Sección Semanas ----- */
 #semanas h2 {
-  color: #355070;
+  color: #191970;
   font-weight: bold;
 }
 
@@ -93,12 +96,12 @@ body {
 }
 
 .card-title {
-  color: #6d597a;
+  color: #191970;
   font-weight: 600;
 }
 
 .btn-semana {
-  background: #e56b6f;
+  background: #e9967a;
   color: #fff;
   border-radius: 20px;
   padding: 8px 18px;
@@ -106,13 +109,14 @@ body {
 }
 
 .btn-semana:hover {
-  background: #b56576;
+  background: #ffb6c1;
+  color: #191970;
   transform: translateY(-2px);
 }
 
 /* ----- Footer ----- */
 footer {
-  background: #355070;
+  background: #191970;
   color: #fff;
   font-size: 0.9rem;
   margin-top: auto;
