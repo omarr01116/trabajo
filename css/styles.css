@@ -1,106 +1,131 @@
-/* ----- Estilos base ----- */
+/* ----- Reset ----- */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
-  min-height: 100vh;
+  color: #355070;
+  background: #fdfdfd; /* base neutra */
   display: flex;
   flex-direction: column;
-
-  /* Fondo minimalista animado */
-  background: linear-gradient(120deg, #f9f9f9, #eaf4ff);
-  background-size: 200% 200%;
-  animation: fondoAnimado 10s ease infinite;
-}
-
-/* Animación del fondo */
-@keyframes fondoAnimado {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  min-height: 100vh;
 }
 
 /* ----- Encabezado ----- */
 header {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  background: #355070;
+  color: #fff;
   padding: 20px 40px;
   text-align: center;
-  animation: fadeDown 1s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 600;
-  color: #4a148c; /* lila elegante */
   letter-spacing: 1px;
 }
 
-/* Animación encabezado */
-@keyframes fadeDown {
-  from { transform: translateY(-30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* ----- Sección principal ----- */
+/* ----- Hero (intro) ----- */
 .hero {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
   padding: 60px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #eaac8b, #fdfdfd);
 }
 
 .hero-content {
-  animation: fadeUp 1.2s ease;
+  max-width: 600px;
 }
 
 .hero-content h2 {
-  font-size: 1.4rem;
-  color: #37474f;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #6d597a;
   margin-bottom: 25px;
-}
-
-/* Animación entrada */
-@keyframes fadeUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 /* ----- Botón Contacto ----- */
 .btn-contact {
   display: inline-block;
-  padding: 14px 34px;
-  background: linear-gradient(135deg, #2196f3, #7e57c2); /* azul → lila */
+  padding: 12px 30px;
+  background: #e56b6f;
   color: #fff;
   font-size: 1rem;
   font-weight: 500;
   border: none;
-  border-radius: 30px;
+  border-radius: 25px;
   text-decoration: none;
-  transition: all 0.4s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+  transition: all 0.3s ease;
 }
 
 .btn-contact:hover {
-  background: linear-gradient(135deg, #7e57c2, #2196f3);
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 18px rgba(126, 87, 194, 0.35);
+  background: #b56576;
+  transform: translateY(-3px);
+}
+
+/* ----- Sección semanas ----- */
+.semanas {
+  padding: 50px 20px;
+  background: #fff;
+}
+
+.semanas h3 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 30px;
+  color: #355070;
+}
+
+.semana-card {
+  background: #f9f9f9;
+  border: 1px solid #eaac8b;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px auto;
+  max-width: 320px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.semana-card:hover {
+  transform: scale(1.03);
+}
+
+.semana-card h4 {
+  margin: 0 0 10px;
+  color: #6d597a;
+}
+
+.semana-card p {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.semana-card a {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 18px;
+  background: #355070;
+  color: #fff;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.semana-card a:hover {
+  background: #6d597a;
 }
 
 /* ----- Footer ----- */
 footer {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
+  background: #355070;
+  color: #fff;
   text-align: center;
   padding: 15px;
   font-size: 0.9rem;
-  color: #616161;
-  border-top: 1px solid #e0e0e0;
-  animation: fadeUp 1.5s ease;
 }
