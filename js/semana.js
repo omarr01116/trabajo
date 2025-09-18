@@ -1,9 +1,8 @@
-<script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // 🔑 Configuración Supabase
 const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
+const SUPABASE_ANON_KEY = "TU_ANON_KEY_COMPLETA"; // pon aquí la key completa
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 📌 Obtener número de semana desde la URL
@@ -21,13 +20,13 @@ const previewDiv = document.getElementById("preview");
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
-  const { data, error } = await supabase.storage
+  // Intentamos listar dentro de la carpeta
+  let { data, error } = await supabase.storage
     .from("archivos")
     .list(carpeta, { limit: 100 });
 
-  listaArchivos.innerHTML = "";
-
   if (error) {
+    console.error("❌ Error al listar:", error);
     listaArchivos.innerHTML = `
       <div class="col-12 text-center text-danger">
         <p>❌ Error al listar: ${error.message}</p>
@@ -36,23 +35,42 @@ async function cargarArchivos() {
     return;
   }
 
+  // Si no hay nada en la carpeta, probamos en la raíz
   if (!data || data.length === 0) {
-    listaArchivos.innerHTML = `
-      <div class="col-12 text-center text-muted">
-        <p>⚠️ No hay archivos en la carpeta "${carpeta}".</p>
-      </div>
-    `;
-    return;
+    console.warn(`⚠️ No hay archivos en "${carpeta}", probando en raíz...`);
+
+    const root = await supabase.storage
+      .from("archivos")
+      .list("", { limit: 100 });
+
+    data = root.data;
+    error = root.error;
+
+    if (error) {
+      listaArchivos.innerHTML = `<p class="text-danger">❌ ${error.message}</p>`;
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      listaArchivos.innerHTML = `
+        <div class="col-12 text-center text-muted">
+          <p>⚠️ No hay archivos en el bucket.</p>
+        </div>
+      `;
+      return;
+    }
   }
 
+  listaArchivos.innerHTML = "";
+
   for (const file of data) {
-    // ✅ Fix para obtener la URL pública
-    const { data: urlData } = supabase
-      .storage
+    if (file.name.endsWith("/")) continue; // evitar carpetas
+
+    const { data: urlData } = supabase.storage
       .from("archivos")
       .getPublicUrl(`${carpeta}/${file.name}`);
 
-    const verUrl = urlData.publicUrl;
+    const verUrl = urlData?.publicUrl || "#";
     const descargarUrl = `${verUrl}?download=${file.name}`;
 
     const col = document.createElement("div");
@@ -68,7 +86,6 @@ async function cargarArchivos() {
       </div>
     `;
 
-    // 📌 Evento para mostrar preview
     col.querySelector(".ver-btn").addEventListener("click", () => {
       mostrarPreview(verUrl, file.name);
     });
@@ -104,4 +121,3 @@ function mostrarPreview(url, name) {
 }
 
 cargarArchivos();
-</script>
