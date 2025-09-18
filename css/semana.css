@@ -1,0 +1,98 @@
+/* 🎨 Paleta de Colores */
+:root {
+  --rosa-caramelo: #ffb6b9;
+  --rosa-desierto: #e56b6f;
+  --azul-mn: #355070;
+  --beige: #f8edeb;
+  --blanco: #ffffff;
+}
+
+/* General */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--beige);
+  color: var(--azul-mn);
+  margin: 0;
+  padding: 0;
+}
+
+/* Títulos */
+.titulo-principal {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--azul-mn);
+}
+
+/* Botón volver */
+.btn-volver {
+  background: var(--rosa-desierto);
+  color: var(--blanco);
+  border-radius: 12px;
+  padding: 8px 15px;
+  transition: 0.3s;
+}
+.btn-volver:hover {
+  background: var(--rosa-caramelo);
+  color: var(--azul-mn);
+}
+
+/* Tarjetas */
+.lista-card, .preview-card {
+  border-radius: 15px;
+  background: var(--blanco);
+  border: 2px solid var(--rosa-caramelo);
+  transition: transform 0.2s ease;
+}
+.lista-card:hover, .preview-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Archivos */
+#listaArchivos .card {
+  border: 1px solid var(--rosa-caramelo);
+  background: var(--beige);
+  border-radius: 12px;
+}
+#listaArchivos .btn {
+  border-radius: 10px;
+}
+
+/* Botones */
+.btn-primary {
+  background: var(--azul-mn);
+  border: none;
+}
+.btn-primary:hover {
+  background: var(--rosa-desierto);
+}
+
+.btn-success {
+  background: var(--rosa-caramelo);
+  border: none;
+  color: var(--azul-mn);
+}
+.btn-success:hover {
+  background: var(--rosa-desierto);
+  color: var(--blanco);
+}
+
+/* Vista previa */
+#preview {
+  min-height: 400px;
+  border: 2px dashed var(--rosa-caramelo);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--beige);
+  padding: 15px;
+}
+
+#preview iframe,
+#preview img,
+#preview video {
+  width: 100%;
+  height: 500px;
+  border-radius: 12px;
+  border: none;
+}
