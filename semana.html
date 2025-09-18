@@ -73,7 +73,8 @@
         .from("archivos")
         .getPublicUrl(`${carpeta}/${file.name}`);
 
-      const url = urlData?.publicUrl || "#";
+      const verUrl = urlData?.publicUrl || "#";
+      const descargarUrl = `${verUrl}?download=${file.name}`;
 
       const col = document.createElement("div");
       col.className = "col-md-4";
@@ -82,8 +83,8 @@
         <div class="card h-100 p-3 text-center">
           <h5 class="card-title">${file.name}</h5>
           <div class="d-grid gap-2 mt-2">
-            <a href="${url}" target="_blank" class="btn btn-primary">👁 Ver</a>
-            <a href="${url}" class="btn btn-success" download>⬇ Descargar</a>
+            <a href="${verUrl}" target="_blank" class="btn btn-primary">👁 Ver</a>
+            <a href="${descargarUrl}" class="btn btn-success">⬇ Descargar</a>
           </div>
         </div>
       `;
