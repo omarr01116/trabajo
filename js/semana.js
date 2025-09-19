@@ -9,19 +9,19 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // 📌 Obtener número de semana desde la URL
 const params = new URLSearchParams(window.location.search);
 const semanaNumero = params.get("semana") || "1";
-const carpeta = `Semana ${semanaNumero}`;
+
+// 👇 importante: slash final
+const carpeta = `Semana ${semanaNumero}/`;
 
 // Mostrar título
-document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
+document.getElementById("tituloSemana").textContent = `Trabajos - Semana ${semanaNumero}`;
 
 const listaArchivos = document.getElementById("listaArchivos");
-const previewDiv = document.getElementById("preview");
 
 // 📂 Cargar archivos de esa semana
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
-  // Mostrar mensaje de carga
   listaArchivos.innerHTML = `
     <div class="col-12 text-center text-muted">
       <p>⏳ Cargando archivos...</p>
@@ -48,13 +48,12 @@ async function cargarArchivos() {
     return;
   }
 
-  // Limpiar y mostrar resultados
   listaArchivos.innerHTML = "";
 
   data.forEach((file) => {
     const { data: urlData } = supabase.storage
       .from("archivos")
-      .getPublicUrl(`${carpeta}/${file.name}`);
+      .getPublicUrl(`${carpeta}${file.name}`);
 
     const verUrl = urlData?.publicUrl || "#";
 
