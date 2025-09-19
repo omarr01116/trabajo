@@ -17,39 +17,31 @@ document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos recursivamente (con soporte de carpetas)
-async function listarArchivosRecursivo(path = carpeta) {
+// 📂 Función para listar archivos con log de depuración
+async function listarArchivos(path = carpeta) {
   const { data, error } = await supabase.storage
     .from("archivos")
     .list(path, { limit: 100 });
+
+  console.log("📂 list() path:", path, "→", data, error);
 
   if (error) {
     console.error("❌ Error al listar:", error.message);
     return [];
   }
 
-  let archivos = [];
-
-  for (const item of data) {
-    if (item.metadata && item.metadata.isDirectory) {
-      // Es carpeta → listar dentro
-      const subPath = `${path}/${item.name}`;
-      const subArchivos = await listarArchivosRecursivo(subPath);
-      archivos = archivos.concat(subArchivos);
-    } else {
-      // Es archivo
-      archivos.push({ path, name: item.name });
-    }
-  }
-
-  return archivos;
+  // Filtrar solo archivos (ignora carpetas)
+  return data.filter(item => !item.metadata?.isDirectory).map(item => ({
+    path,
+    name: item.name,
+  }));
 }
 
 // 📂 Cargar archivos de esa semana
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
-  const archivos = await listarArchivosRecursivo();
+  const archivos = await listarArchivos();
 
   listaArchivos.innerHTML = "";
 
