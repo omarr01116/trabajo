@@ -17,7 +17,7 @@ document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos recursivamente (subcarpetas incluidas)
+// 📂 Función para listar archivos recursivamente (con soporte de carpetas)
 async function listarArchivosRecursivo(path = carpeta) {
   const { data, error } = await supabase.storage
     .from("archivos")
@@ -31,12 +31,13 @@ async function listarArchivosRecursivo(path = carpeta) {
   let archivos = [];
 
   for (const item of data) {
-    if (item.name.endsWith("/")) {
-      // Si es carpeta → buscar dentro
+    if (item.metadata && item.metadata.isDirectory) {
+      // Es carpeta → listar dentro
       const subPath = `${path}/${item.name}`;
       const subArchivos = await listarArchivosRecursivo(subPath);
       archivos = archivos.concat(subArchivos);
     } else {
+      // Es archivo
       archivos.push({ path, name: item.name });
     }
   }
