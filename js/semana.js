@@ -17,7 +17,7 @@ document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos con log de depuración
+// 📂 Función para listar archivos dentro de una carpeta
 async function listarArchivos(path = carpeta) {
   const { data, error } = await supabase.storage
     .from("archivos")
@@ -30,7 +30,7 @@ async function listarArchivos(path = carpeta) {
     return [];
   }
 
-  // Filtrar solo archivos (ignora carpetas)
+  // Solo los archivos (ignora carpetas vacías)
   return data.filter(item => !item.metadata?.isDirectory).map(item => ({
     path,
     name: item.name,
@@ -41,11 +41,19 @@ async function listarArchivos(path = carpeta) {
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
+  // Mensaje mientras carga
+  listaArchivos.innerHTML = `
+    <div class="col-12 text-center text-muted">
+      <p>⏳ Cargando archivos...</p>
+    </div>
+  `;
+
   const archivos = await listarArchivos();
 
-  listaArchivos.innerHTML = "";
+  listaArchivos.innerHTML = ""; // limpiar para pintar resultado
 
-  if (archivos.length === 0) {
+  if (!archivos || archivos.length === 0) {
+    console.warn(`⚠️ No se encontraron archivos en ${carpeta}`);
     listaArchivos.innerHTML = `
       <div class="col-12 text-center text-muted">
         <p>⚠️ No hay archivos en la carpeta "${carpeta}".</p>
@@ -91,7 +99,7 @@ function mostrarPreview(url, name) {
     previewContent = `<iframe src="${url}" title="Vista previa PDF"></iframe>`;
   } else if (name.match(/\.(jpg|jpeg|png|gif)$/i)) {
     previewContent = `<img src="${url}" class="img-fluid rounded shadow" alt="Vista previa">`;
-  } else if (name.match(/\.(mp4|webm)$/i)) {
+  } else if (name.match(/\.(mp4|webm|mkv)$/i)) {
     previewContent = `<video src="${url}" controls class="w-100 rounded shadow"></video>`;
   } else if (name.match(/\.(docx|doc|pptx|ppt|xlsx|xls)$/i)) {
     previewContent = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(
@@ -111,4 +119,5 @@ function mostrarPreview(url, name) {
   previewDiv.innerHTML = previewContent;
 }
 
+// 🚀 Ejecutar
 cargarArchivos();
