@@ -17,43 +17,29 @@ document.getElementById("tituloSemana").textContent = `Trabajos - ${carpeta}`;
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos dentro de una carpeta
-async function listarArchivos(path = carpeta) {
-  const { data, error } = await supabase.storage
-    .from("archivos")
-    .list(path, { limit: 100 });
-
-  console.log("📂 list() path:", path, "→", data, error);
-
-  if (error) {
-    console.error("❌ Error al listar:", error.message);
-    return [];
-  }
-
-  // Solo los archivos (ignora carpetas vacías)
-  return data.filter(item => !item.metadata?.isDirectory).map(item => ({
-    path,
-    name: item.name,
-  }));
-}
-
 // 📂 Cargar archivos de esa semana
 async function cargarArchivos() {
   console.log(`📂 Buscando archivos en carpeta: "${carpeta}"`);
 
-  // Mensaje mientras carga
+  // Mostrar mensaje de carga
   listaArchivos.innerHTML = `
     <div class="col-12 text-center text-muted">
       <p>⏳ Cargando archivos...</p>
     </div>
   `;
 
-  const archivos = await listarArchivos();
+  const { data, error } = await supabase.storage
+    .from("archivos")
+    .list(carpeta, { limit: 100 });
 
-  listaArchivos.innerHTML = ""; // limpiar para pintar resultado
+  console.log("✅ Archivos encontrados:", data, error);
 
-  if (!archivos || archivos.length === 0) {
-    console.warn(`⚠️ No se encontraron archivos en ${carpeta}`);
+  if (error) {
+    listaArchivos.innerHTML = `<p class="text-danger">❌ Error: ${error.message}</p>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
     listaArchivos.innerHTML = `
       <div class="col-12 text-center text-muted">
         <p>⚠️ No hay archivos en la carpeta "${carpeta}".</p>
@@ -62,13 +48,15 @@ async function cargarArchivos() {
     return;
   }
 
-  for (const file of archivos) {
+  // Limpiar y mostrar resultados
+  listaArchivos.innerHTML = "";
+
+  data.forEach((file) => {
     const { data: urlData } = supabase.storage
       .from("archivos")
-      .getPublicUrl(`${file.path}/${file.name}`);
+      .getPublicUrl(`${carpeta}/${file.name}`);
 
     const verUrl = urlData?.publicUrl || "#";
-    const descargarUrl = `${verUrl}?download=${file.name}`;
 
     const col = document.createElement("div");
     col.className = "col-12";
@@ -77,46 +65,14 @@ async function cargarArchivos() {
       <div class="card p-2 text-center shadow-sm">
         <h6 class="card-title text-truncate" title="${file.name}">${file.name}</h6>
         <div class="d-grid gap-1 mt-2">
-          <button class="btn btn-primary btn-sm ver-btn">👁 Vista previa</button>
-          <a href="${descargarUrl}" class="btn btn-success btn-sm">⬇ Descargar</a>
+          <a href="${verUrl}" target="_blank" class="btn btn-primary btn-sm">👁 Ver archivo</a>
+          <a href="${verUrl}?download=${file.name}" class="btn btn-success btn-sm">⬇ Descargar</a>
         </div>
       </div>
     `;
 
-    col.querySelector(".ver-btn").addEventListener("click", () => {
-      mostrarPreview(verUrl, file.name);
-    });
-
     listaArchivos.appendChild(col);
-  }
-}
-
-// 📌 Mostrar vista previa según tipo de archivo
-function mostrarPreview(url, name) {
-  let previewContent = "";
-
-  if (name.endsWith(".pdf")) {
-    previewContent = `<iframe src="${url}" title="Vista previa PDF"></iframe>`;
-  } else if (name.match(/\.(jpg|jpeg|png|gif)$/i)) {
-    previewContent = `<img src="${url}" class="img-fluid rounded shadow" alt="Vista previa">`;
-  } else if (name.match(/\.(mp4|webm|mkv)$/i)) {
-    previewContent = `<video src="${url}" controls class="w-100 rounded shadow"></video>`;
-  } else if (name.match(/\.(docx|doc|pptx|ppt|xlsx|xls)$/i)) {
-    previewContent = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(
-      url
-    )}&embedded=true" title="Vista previa Office"></iframe>`;
-  } else if (name.endsWith(".txt")) {
-    previewContent = `<iframe src="${url}" title="Vista previa TXT"></iframe>`;
-  } else {
-    previewContent = `
-      <div class="text-center text-muted">
-        📄 No hay vista previa disponible para este archivo.<br>
-        <a href="${url}" target="_blank" class="btn btn-primary mt-3">Abrir archivo</a>
-      </div>
-    `;
-  }
-
-  previewDiv.innerHTML = previewContent;
+  });
 }
 
 // 🚀 Ejecutar
