@@ -10,8 +10,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(window.location.search);
 const semanaNumero = params.get("semana") || "1";
 
-// 👇 importante: slash final
-const carpeta = `Semana ${semanaNumero}/`;
+// 👇 importante: usamos guion bajo en la carpeta
+const carpeta = `Semana_${semanaNumero}/`;
 
 // Mostrar título
 document.getElementById("tituloSemana").textContent = `Trabajos - Semana ${semanaNumero}`;
