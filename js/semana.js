@@ -10,16 +10,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(window.location.search);
 const semanaNumero = params.get("semana") || "1";
 
-// 👇 importante: usamos guion bajo en la carpeta
+// Carpeta real en Supabase (con guion bajo)
 const carpeta = `Semana_${semanaNumero}/`;
 
-// Mostrar título
+// Título visible al usuario (bonito con espacio)
 document.getElementById("tituloSemana").textContent = `Trabajos - Semana ${semanaNumero}`;
 
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos recursivamente (subcarpetas incluidas)
+// 📂 Función para listar archivos recursivamente
 async function listarArchivosRecursivo(path = carpeta) {
   const { data, error } = await supabase.storage
     .from("archivos")
@@ -34,7 +34,7 @@ async function listarArchivosRecursivo(path = carpeta) {
 
   for (const item of data) {
     if (item.metadata && item.metadata.is_directory) {
-      // Si es carpeta → buscar dentro
+      // Buscar dentro de subcarpetas
       const subPath = `${path}${item.name}/`;
       const subArchivos = await listarArchivosRecursivo(subPath);
       archivos = archivos.concat(subArchivos);
@@ -63,7 +63,7 @@ async function cargarArchivos() {
   if (archivos.length === 0) {
     listaArchivos.innerHTML = `
       <div class="col-12 text-center text-muted">
-        <p>⚠️ No hay archivos en la carpeta "${carpeta}".</p>
+        <p>⚠️ No hay archivos en la carpeta "Semana ${semanaNumero}".</p>
       </div>
     `;
     return;
