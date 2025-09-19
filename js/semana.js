@@ -50,13 +50,15 @@ async function cargarArchivos() {
 
   listaArchivos.innerHTML = "";
 
-  data.forEach((file) => {
+  for (const file of data) {
+    // Generar URL pública
     const { data: urlData } = supabase.storage
       .from("archivos")
       .getPublicUrl(`${carpeta}${file.name}`);
 
     const verUrl = urlData?.publicUrl || "#";
 
+    // Crear tarjeta
     const col = document.createElement("div");
     col.className = "col-12";
 
@@ -71,7 +73,7 @@ async function cargarArchivos() {
     `;
 
     listaArchivos.appendChild(col);
-  });
+  }
 }
 
 // 🚀 Ejecutar
