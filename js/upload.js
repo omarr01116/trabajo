@@ -15,7 +15,7 @@ const filtroSemana = document.getElementById("filtroSemana");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const archivo = document.getElementById("archivo").files[0];
-  let semana = document.getElementById("semana").value;
+  const semana = document.getElementById("semana").value; // ⚡ se queda con espacio
 
   if (!archivo) {
     estado.textContent = "⚠️ Selecciona un archivo.";
@@ -23,13 +23,11 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // 🚨 Normalizar la carpeta (sin espacios)
-  const semanaKey = semana.replace(/\s+/g, "_");
-
   estado.textContent = "⏳ Subiendo...";
   estado.style.color = "orange";
 
-  const filePath = `${semanaKey}/${Date.now()}_${archivo.name}`;
+  // ✅ Guardar en carpeta con espacio
+  const filePath = `${semana}/${Date.now()}_${archivo.name}`;
 
   const { error } = await supabase.storage
     .from("archivos")
@@ -50,12 +48,9 @@ form.addEventListener("submit", async (e) => {
 
 // 📂 Cargar archivos de una semana
 async function cargarArchivos(semana) {
-  // 🚨 Normalizar carpeta para storage
-  const semanaKey = semana.replace(/\s+/g, "_");
-
   const { data, error } = await supabase.storage
     .from("archivos")
-    .list(semanaKey, { limit: 100 });
+    .list(semana, { limit: 100 }); // ⚡ carpeta con espacio
 
   listaArchivos.innerHTML = "";
 
@@ -72,7 +67,7 @@ async function cargarArchivos(semana) {
   data.forEach(async (file) => {
     const { data: urlData } = await supabase.storage
       .from("archivos")
-      .getPublicUrl(`${semanaKey}/${file.name}`);
+      .getPublicUrl(`${semana}/${file.name}`);
 
     const fecha = new Date(file.created_at || Date.now()).toLocaleString();
 
@@ -81,7 +76,7 @@ async function cargarArchivos(semana) {
       <td><a href="${urlData.publicUrl}" target="_blank">${file.name}</a></td>
       <td>${fecha}</td>
       <td>
-        <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${semanaKey}/${file.name}')">Borrar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${semana}/${file.name}')">Borrar</button>
       </td>
     `;
     listaArchivos.appendChild(row);

@@ -10,16 +10,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(window.location.search);
 const semanaNumero = params.get("semana") || "1";
 
-// Carpeta real en Supabase (con guion bajo)
-const carpeta = `Semana_${semanaNumero}/`;
+// ✅ Carpeta real en Supabase (con espacio)
+const carpeta = `Semana ${semanaNumero}/`;
 
-// Título visible al usuario (bonito con espacio)
+// Título visible al usuario
 document.getElementById("tituloSemana").textContent = `Trabajos - Semana ${semanaNumero}`;
 
 const listaArchivos = document.getElementById("listaArchivos");
 const previewDiv = document.getElementById("preview");
 
-// 📂 Función para listar archivos recursivamente
+// 📂 Función para listar archivos
 async function listarArchivosRecursivo(path = carpeta) {
   const { data, error } = await supabase.storage
     .from("archivos")
