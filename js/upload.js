@@ -2,7 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // 🔑 Configuración Supabase
 const SUPABASE_URL = "https://bazwwhwjruwgyfomyttp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhend3aHdqcnV3Z3lmb215dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNjA1NTAsImV4cCI6MjA3MzczNjU1MH0.RzpCKpYV-GqNIhTklsQtRqyiPCGGmVlUs7q_BeBHxUo";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const form = document.getElementById("formUpload");
@@ -14,7 +15,7 @@ const filtroSemana = document.getElementById("filtroSemana");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const archivo = document.getElementById("archivo").files[0];
-  const semana = document.getElementById("semana").value;
+  let semana = document.getElementById("semana").value;
 
   if (!archivo) {
     estado.textContent = "⚠️ Selecciona un archivo.";
@@ -22,10 +23,13 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  // 🚨 Normalizar la carpeta (sin espacios)
+  const semanaKey = semana.replace(/\s+/g, "_");
+
   estado.textContent = "⏳ Subiendo...";
   estado.style.color = "orange";
 
-  const filePath = `${semana}/${Date.now()}_${archivo.name}`;
+  const filePath = `${semanaKey}/${Date.now()}_${archivo.name}`;
 
   const { error } = await supabase.storage
     .from("archivos")
@@ -46,9 +50,12 @@ form.addEventListener("submit", async (e) => {
 
 // 📂 Cargar archivos de una semana
 async function cargarArchivos(semana) {
+  // 🚨 Normalizar carpeta para storage
+  const semanaKey = semana.replace(/\s+/g, "_");
+
   const { data, error } = await supabase.storage
     .from("archivos")
-    .list(semana, { limit: 100 });
+    .list(semanaKey, { limit: 100 });
 
   listaArchivos.innerHTML = "";
 
@@ -65,7 +72,7 @@ async function cargarArchivos(semana) {
   data.forEach(async (file) => {
     const { data: urlData } = await supabase.storage
       .from("archivos")
-      .getPublicUrl(`${semana}/${file.name}`);
+      .getPublicUrl(`${semanaKey}/${file.name}`);
 
     const fecha = new Date(file.created_at || Date.now()).toLocaleString();
 
@@ -74,7 +81,7 @@ async function cargarArchivos(semana) {
       <td><a href="${urlData.publicUrl}" target="_blank">${file.name}</a></td>
       <td>${fecha}</td>
       <td>
-        <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${semana}/${file.name}')">Borrar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${semanaKey}/${file.name}')">Borrar</button>
       </td>
     `;
     listaArchivos.appendChild(row);
