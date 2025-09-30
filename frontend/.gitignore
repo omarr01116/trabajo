@@ -7,12 +7,21 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencias
+node_modules/
 
-# Editor directories and files
+# Builds (excepto frontend/dist que sí se necesita para GitHub Pages)
+dist
+!frontend/dist
+dist-ssr
+
+# Archivos locales de entorno
+*.local
+.env
+.env.local
+.env.*.local
+
+# Configuración de editores
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,3 +31,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sistema operativo
+Thumbs.db
