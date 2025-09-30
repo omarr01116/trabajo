@@ -3,11 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/trabajo/', // 👈 nombre del repo
   build: {
-    outDir: 'docs',   // la carpeta final para GitHub Pages
+    outDir: "docs", // GitHub Pages sirve desde /docs
   },
-  server: {
-    open: true,
-  },
+  base: "/trabajo/", // 👈 nombre de tu repo
 })
