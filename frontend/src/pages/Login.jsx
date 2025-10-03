@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("usuario"); // rol seleccionado en frontend
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,11 +29,10 @@ function Login() {
         return;
       }
 
-      // 2️⃣ Obtener token de sesión de Supabase
       const token = data.session.access_token;
       console.log("TOKEN DE SUPABASE:", token);
 
-      // 3️⃣ Llamar al backend en Render
+      // 2️⃣ Llamar al backend en Render
       const resp = await fetch(
         "https://trabajo-backend.onrender.com/api/login",
         {
@@ -41,14 +41,20 @@ function Login() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ email, password }), // Solo email y password
+          body: JSON.stringify({ email, password }), // enviamos email y password
         }
       );
 
       const json = await resp.json();
 
       if (resp.ok) {
-        alert(`✅ Login exitoso. Rol: ${json.role}`);
+        // ✅ Compara el rol devuelto con el seleccionado en frontend
+        if (json.role !== role) {
+          alert(`⚠️ Rol seleccionado: ${role}. Tu rol real: ${json.role}`);
+        } else {
+          alert(`✅ Login exitoso con rol: ${json.role}`);
+        }
+
         navigate("/file"); // Redirigir a file.jsx
       } else {
         console.error("Error backend:", json);
@@ -85,6 +91,15 @@ function Login() {
             className="w-full px-4 py-2 border rounded-lg"
             required
           />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg"
+          >
+            <option value="admin">Admin</option>
+            <option value="usuario">Usuario</option>
+            <option value="invitado">Invitado</option>
+          </select>
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
