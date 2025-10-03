@@ -32,16 +32,16 @@ function Login() {
       const token = data.session.access_token;
       console.log("TOKEN DE SUPABASE:", token);
 
-      // 2️⃣ Llamar al backend en Render
+      // 2️⃣ Llamar al backend solo con el token
       const resp = await fetch(
         "https://trabajo-backend.onrender.com/api/login",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // enviamos el token en headers
           },
-          body: JSON.stringify({ role }), // enviamos solo el rol, backend ya obtiene email del token
+          body: JSON.stringify({}), // body vacío, backend obtiene usuario del token
         }
       );
 

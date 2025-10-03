@@ -4,29 +4,26 @@ import { supabase } from "../supabaseClient.js";
 
 const router = express.Router();
 
-// 📌 Esquema de validación con Zod
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
-// 📌 Ruta POST /api/login
 router.post("/login", async (req, res) => {
   try {
-    // 1️⃣ Validar datos
     const { email, password } = loginSchema.parse(req.body);
 
-    // 2️⃣ Autenticar con Supabase
+    // Autenticar con Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      return res.status(401).json({ error: error.message });
+    if (error || !data.user) {
+      return res.status(401).json({ error: error?.message || "Login fallido" });
     }
 
-    // 3️⃣ Obtener rol desde la tabla profiles
+    // Obtener rol desde tabla profiles
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
@@ -37,18 +34,18 @@ router.post("/login", async (req, res) => {
       return res.status(500).json({ error: "No se pudo obtener el rol" });
     }
 
-    // 4️⃣ Responder con el token y el rol
+    // Devolver token y rol al frontend
     res.json({
       token: data.session.access_token,
-      role: profile.role,
+      role: profile.role || "usuario",
       user: { id: data.user.id, email: data.user.email },
     });
 
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: err.errors });
     }
-    console.error(error);
+    console.error(err);
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
