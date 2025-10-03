@@ -41,7 +41,7 @@ function Login() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ email, password }), // enviamos email y password
+          body: JSON.stringify({ role }), // enviamos solo el rol, backend ya obtiene email del token
         }
       );
 
