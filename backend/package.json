@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -18,5 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "zod": "^4.1.11"
   },
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": "20.x"
+  }
 }
