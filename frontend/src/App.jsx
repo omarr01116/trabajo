@@ -1,23 +1,23 @@
-import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import Home from './pages/Home'
-import Portafolio from './pages/Portafolio'
-import SobreMi from './pages/SobreMi'
-import Contacto from './pages/Contacto'
-import Login from './pages/Login'
-import './App.css'
+import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import Portafolio from "./pages/Portafolio";
+import SobreMi from "./pages/SobreMi";
+import Contacto from "./pages/Contacto";
+import Login from "./pages/Login";
+import File from "./pages/File"; // 🔹 Asegúrate de crear File.jsx
+import "./App.css";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <Router basename="/trabajo"> {/* 👈 importante para GitHub Pages */}
+    <Router basename="/trabajo"> {/* importante si usas GitHub Pages */}
       <div className="font-sans text-gray-800">
-        
+
         {/* 🔹 Navbar */}
         <nav className="fixed top-0 w-full bg-white shadow z-50">
           <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
-            
             {/* Logo */}
             <Link to="/" className="text-2xl font-bold text-indigo-600">
               Omar Quispe Ore
@@ -77,6 +77,7 @@ function App() {
             <Route path="/sobre-mi" element={<SobreMi />} />
             <Route path="/contacto" element={<Contacto />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/file" element={<File />} /> {/* 🔹 Nueva ruta */}
           </Routes>
         </div>
 
