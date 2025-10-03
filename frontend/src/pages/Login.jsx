@@ -47,24 +47,24 @@ function Login() {
 
       const json = await resp.json();
 
-      if (resp.ok) {
-        // ✅ Compara el rol devuelto con el seleccionado en frontend
-        if (json.role !== role) {
-          alert(`⚠️ Rol seleccionado: ${role}. Tu rol real: ${json.role}`);
-        } else {
-          alert(`✅ Login exitoso con rol: ${json.role}`);
-        }
-
-        navigate("/file"); // Redirigir a file.jsx
-      } else {
+      if (!resp.ok) {
         console.error("Error backend:", json);
         alert("❌ Login fallido: " + (json.error || "Error desconocido"));
+        return;
       }
+
+      // ✅ Compara el rol devuelto con el seleccionado en frontend
+      if (json.role !== role) {
+        alert(`⚠️ Rol seleccionado: ${role}. Tu rol real: ${json.role}`);
+      } else {
+        alert(`✅ Login exitoso con rol: ${json.role}`);
+      }
+
+      navigate("/file"); // Redirigir a file.jsx
+
     } catch (err) {
       console.error("Error de conexión:", err);
-      alert(
-        "❌ No se pudo conectar con el backend. Revisa tu internet o CORS."
-      );
+      alert("❌ No se pudo conectar con el backend. Revisa tu internet o CORS.");
     }
   };
 

@@ -1,26 +1,22 @@
 import express from "express";
-import { z } from "zod";
 import { supabase } from "../supabaseClient.js";
 
 const router = express.Router();
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
-
+// POST /api/login usando token del frontend
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = loginSchema.parse(req.body);
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(401).json({ error: "Token requerido" });
+    }
 
-    // Autenticar con Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const token = authHeader.split(" ")[1]; // "Bearer <token>"
 
+    // Validar token con Supabase
+    const { data, error } = await supabase.auth.getUser(token);
     if (error || !data.user) {
-      return res.status(401).json({ error: error?.message || "Login fallido" });
+      return res.status(403).json({ error: "Token inválido o expirado" });
     }
 
     // Obtener rol desde tabla profiles
@@ -34,17 +30,14 @@ router.post("/login", async (req, res) => {
       return res.status(500).json({ error: "No se pudo obtener el rol" });
     }
 
-    // Devolver token y rol al frontend
+    // Responder con token y rol
     res.json({
-      token: data.session.access_token,
+      token,
       role: profile.role || "usuario",
       user: { id: data.user.id, email: data.user.email },
     });
 
   } catch (err) {
-    if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: err.errors });
-    }
     console.error(err);
     res.status(500).json({ error: "Error en el servidor" });
   }
