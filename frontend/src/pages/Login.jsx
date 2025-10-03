@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom"; // 👈 importar hook de navegación
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("usuario"); // valor por defecto
+  const [role, setRole] = useState("usuario");
+  const navigate = useNavigate(); // 👈 inicializar navegación
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,19 +25,18 @@ function Login() {
     // 2️⃣ Obtener token de sesión de Supabase
     const token = data.session.access_token;
 
-    // 3️⃣ Llamar al backend con el token
+    // 3️⃣ Llamar al backend
     const resp = await fetch("http://localhost:3000/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 👈 pasamos el JWT
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email, role }),
     });
 
     const json = await resp.json();
 
-    // 4️⃣ Manejo de respuesta
     if (resp.ok) {
       if (json.role !== role) {
         alert(`⚠️ Rol incorrecto. Tu rol real es: ${json.role}`);
@@ -44,13 +45,9 @@ function Login() {
 
       alert("✅ Login exitoso con rol: " + json.role);
 
-      // 5️⃣ Ejemplo: llamar a ruta protegida
-      const res2 = await fetch("http://localhost:3000/api/works", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // 👇 Redirigir a /file después del login exitoso
+      navigate("/file");
 
-      const data2 = await res2.json();
-      console.log("📂 Respuesta protegida:", data2);
     } else {
       alert("❌ Login fallido: " + (json.error || "Error desconocido"));
     }
@@ -80,7 +77,6 @@ function Login() {
             required
           />
 
-          {/* Selector de rol (lo comparamos con el real en Supabase) */}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
