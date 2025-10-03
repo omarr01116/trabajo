@@ -1,7 +1,6 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { supabase } from "../supabaseClient.js";
 
 const router = express.Router();
 
@@ -9,41 +8,42 @@ const router = express.Router();
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(["usuario", "admin"]),
 });
 
-// Ruta POST /api/login
+// 📌 Ruta POST /api/login
 router.post("/login", async (req, res) => {
   try {
     // 1️⃣ Validar datos
-    const { email, password, role } = loginSchema.parse(req.body);
+    const { email, password } = loginSchema.parse(req.body);
 
-    // 2️⃣ Aquí deberíamos consultar Supabase, pero por ahora simulamos
-    const fakeUser = {
-      email: "admin@test.com",
-      passwordHash: await bcrypt.hash("123456", 10),
-      role: "admin",
-    };
-
-    if (email !== fakeUser.email) {
-      return res.status(401).json({ error: "Usuario no encontrado" });
-    }
-
-    const isValid = await bcrypt.compare(password, fakeUser.passwordHash);
-    if (!isValid) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
-    }
-
-    if (role !== fakeUser.role) {
-      return res.status(403).json({ error: "Rol no autorizado" });
-    }
-
-    // 3️⃣ Generar token
-    const token = jwt.sign({ email, role }, process.env.JWT_SECRET || "secreto", {
-      expiresIn: "1h",
+    // 2️⃣ Autenticar con Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    res.json({ token, role });
+    if (error) {
+      return res.status(401).json({ error: error.message });
+    }
+
+    // 3️⃣ Obtener rol desde la tabla profiles
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profileError) {
+      return res.status(500).json({ error: "No se pudo obtener el rol" });
+    }
+
+    // 4️⃣ Responder con el token y el rol
+    res.json({
+      token: data.session.access_token,
+      role: profile.role,
+      user: { id: data.user.id, email: data.user.email },
+    });
+
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });
