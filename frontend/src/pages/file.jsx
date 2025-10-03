@@ -2,166 +2,181 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
 function File() {
-  const role = localStorage.getItem("userRole"); // admin o usuario
-  const userId = localStorage.getItem("userId"); // opcional, si quieres filtrar archivos por usuario
-  const [file, setFile] = useState(null);
-  const [curso, setCurso] = useState("");
-  const [semana, setSemana] = useState("");
+  const role = localStorage.getItem("userRole") || "usuario"; // rol del usuario
+  const [archivo, setArchivo] = useState(null);
+  const [curso, setCurso] = useState("Arquitectura de Software");
+  const [semana, setSemana] = useState("Semana 1");
   const [archivos, setArchivos] = useState([]);
+  const [estado, setEstado] = useState("");
 
-  // Obtener archivos desde Supabase Storage + tabla
-  const fetchFiles = async () => {
-    try {
-      let { data, error } = await supabase
-        .from("archivos") // tabla donde guardas metadata
-        .select("*")
-        .order("created_at", { ascending: false });
+  // 📂 Cargar archivos de Supabase Storage
+  const cargarArchivos = async (cursoSeleccionado, semanaSeleccionada) => {
+    setArchivos([]);
+    setEstado("⏳ Cargando archivos...");
 
-      if (error) throw error;
-      setArchivos(data);
-    } catch (err) {
-      console.error("Error al obtener archivos:", err);
+    const { data, error } = await supabase.storage
+      .from("archivos")
+      .list(`${cursoSeleccionado}/${semanaSeleccionada}`, { limit: 100 });
+
+    if (error) {
+      setEstado("❌ Error al listar archivos: " + error.message);
+      return;
     }
+
+    if (!data || data.length === 0) {
+      setEstado("📭 Sin archivos");
+      return;
+    }
+
+    // Obtener URLs públicas
+    const archivosConUrl = data.map((file) => {
+      const { data: urlData } = supabase.storage
+        .from("archivos")
+        .getPublicUrl(`${cursoSeleccionado}/${semanaSeleccionada}/${file.name}`);
+      return {
+        name: file.name,
+        url: urlData.publicUrl,
+        fecha: new Date(parseInt(file.name.split("_")[0])).toLocaleString(),
+        path: `${cursoSeleccionado}/${semanaSeleccionada}/${file.name}`,
+      };
+    });
+
+    setArchivos(archivosConUrl);
+    setEstado("");
   };
 
   useEffect(() => {
-    fetchFiles();
-  }, []);
+    cargarArchivos(curso, semana);
+  }, [curso, semana]);
 
-  // Subir archivo
-  const handleUpload = async () => {
-    if (!file || !curso || !semana) {
-      alert("Selecciona archivo, curso y semana");
+  // 🔼 Subir archivo
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!archivo) {
+      setEstado("⚠️ Selecciona un archivo");
       return;
     }
 
-    const fileName = `${Date.now()}_${file.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("archivos") // bucket
-      .upload(fileName, file);
+    setEstado("⏳ Subiendo...");
+    const timestamp = Date.now();
+    const filePath = `${curso}/${semana}/${timestamp}_${archivo.name}`;
 
-    if (uploadError) {
-      console.error(uploadError);
-      alert("Error al subir archivo");
-      return;
-    }
+    const { error } = await supabase.storage
+      .from("archivos")
+      .upload(filePath, archivo);
 
-    // Guardar metadata en tabla 'archivos'
-    const { error: dbError } = await supabase.from("archivos").insert([
-      {
-        name: file.name,
-        path: uploadData.path,
-        curso,
-        semana,
-        owner_id: userId || "desconocido",
-      },
-    ]);
-
-    if (dbError) {
-      console.error(dbError);
-      alert("Error al guardar info del archivo");
-      return;
-    }
-
-    alert("Archivo subido correctamente");
-    setFile(null);
-    fetchFiles();
-  };
-
-  // Borrar archivo (solo admin)
-  const handleDelete = async (archivo) => {
-    if (role !== "admin") return;
-
-    const { error } = await supabase.storage.from("archivos").remove([archivo.path]);
     if (error) {
-      console.error(error);
-      alert("Error al eliminar archivo");
+      setEstado("❌ Error al subir archivo: " + error.message);
       return;
     }
 
-    await supabase.from("archivos").delete().eq("id", archivo.id);
-    fetchFiles();
+    setEstado("✅ Archivo subido correctamente");
+    setArchivo(null);
+    cargarArchivos(curso, semana);
   };
 
-  // Editar archivo (solo admin)
-  const handleEdit = (archivo) => {
+  // 🗑️ Eliminar archivo (solo admin)
+  const handleDelete = async (path) => {
     if (role !== "admin") return;
-    alert(`Funcionalidad de edición para: ${archivo.name}`);
-    // Aquí puedes integrar un editor si lo deseas
+    const { error } = await supabase.storage.from("archivos").remove([path]);
+    if (error) {
+      alert("❌ Error al eliminar archivo: " + error.message);
+    } else {
+      alert("✅ Archivo eliminado");
+      cargarArchivos(curso, semana);
+    }
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Panel de Archivos</h1>
+    <div className="container py-8">
+      <h2 className="text-2xl font-bold mb-4">📂 Gestión de Archivos</h2>
 
       {/* Formulario de subida */}
-      <div className="mb-6">
-        <h2 className="font-semibold mb-2">Subir archivo</h2>
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} className="mb-2" />
-        <input
-          type="text"
-          placeholder="Curso"
-          value={curso}
-          onChange={(e) => setCurso(e.target.value)}
-          className="border px-2 py-1 mb-2"
-        />
-        <input
-          type="text"
-          placeholder="Semana"
-          value={semana}
-          onChange={(e) => setSemana(e.target.value)}
-          className="border px-2 py-1 mb-2"
-        />
-        <button
-          onClick={handleUpload}
-          className="bg-indigo-600 text-white px-4 py-2 rounded"
-        >
-          Subir
-        </button>
-      </div>
+      <div className="row mb-6">
+        <div className="col-md-5">
+          <form onSubmit={handleUpload}>
+            <div className="form-group mb-2">
+              <label>Curso</label>
+              <select
+                className="form-control"
+                value={curso}
+                onChange={(e) => setCurso(e.target.value)}
+              >
+                <option>Arquitectura de Software</option>
+                <option>Machine Learning</option>
+                <option>Inglés</option>
+              </select>
+            </div>
 
-      {/* Lista de archivos */}
-      <div>
-        <h2 className="font-semibold mb-2">Archivos subidos</h2>
-        <table className="w-full border">
-          <thead>
-            <tr>
-              <th className="border px-2">Nombre</th>
-              <th className="border px-2">Curso</th>
-              <th className="border px-2">Semana</th>
-              <th className="border px-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {archivos.map((archivo) => (
-              <tr key={archivo.id}>
-                <td className="border px-2">{archivo.name}</td>
-                <td className="border px-2">{archivo.curso}</td>
-                <td className="border px-2">{archivo.semana}</td>
-                <td className="border px-2 space-x-2">
-                  <a
-                    href={`https://YOUR-SUPABASE-URL/storage/v1/object/public/archivos/${archivo.path}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-600"
-                  >
-                    Ver
-                  </a>
-                  {role === "admin" && (
-                    <>
-                      <button onClick={() => handleEdit(archivo)} className="text-yellow-600">
-                        Editar
-                      </button>
-                      <button onClick={() => handleDelete(archivo)} className="text-red-600">
-                        Borrar
-                      </button>
-                    </>
-                  )}
-                </td>
+            <div className="form-group mb-2">
+              <label>Semana</label>
+              <select
+                className="form-control"
+                value={semana}
+                onChange={(e) => setSemana(e.target.value)}
+              >
+                <option>Semana 1</option>
+                <option>Semana 2</option>
+                <option>Semana 3</option>
+                <option>Semana 4</option>
+              </select>
+            </div>
+
+            <div className="form-group mb-2">
+              <label>Archivo</label>
+              <input
+                type="file"
+                className="form-control"
+                onChange={(e) => setArchivo(e.target.files[0])}
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary mt-2">
+              <i className="icon-upload"></i> Subir
+            </button>
+            <p className="mt-2">{estado}</p>
+          </form>
+        </div>
+
+        {/* Lista de archivos */}
+        <div className="col-md-7">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Archivo</th>
+                <th>Fecha</th>
+                <th>Acción</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {archivos.length === 0 && (
+                <tr>
+                  <td colSpan="3">{estado || "📭 Sin archivos"}</td>
+                </tr>
+              )}
+              {archivos.map((file) => (
+                <tr key={file.path}>
+                  <td>
+                    <a href={file.url} target="_blank" rel="noreferrer">
+                      {file.name}
+                    </a>
+                  </td>
+                  <td>{file.fecha}</td>
+                  <td>
+                    {role === "admin" && (
+                      <button
+                        className="btn btn-danger btn-sm me-2"
+                        onClick={() => handleDelete(file.path)}
+                      >
+                        <i className="icon-trash"></i> Borrar
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
